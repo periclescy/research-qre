@@ -1,0 +1,126 @@
+{%  extends 'pages/backend/main.html' %}
+
+{% block content %}
+
+<header class="my-2 mx-auto py-0"><h1 class="text-center text-light">Dashboard</h1></header>
+
+{% if messages %}
+    {% for message in messages %}
+        <div  {% if message.tags %} class="alert alert-{{ message.tags }} alert-dismissible fade show" {% endif %}>
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
+            {{ message }}
+        </div>
+    {% endfor %}
+{% endif %}
+
+<section class="row">
+	<div class="col-sm-6">
+        <div class="card text-center text-light bg-dark mb-3">
+            <div class="card-header">
+                <h5 class="card-title">Total Pairs</h5>
+            </div>
+            <div class="card-body">
+                <h3 class="card-title">{{ total_pairs }}</h3>
+            </div>
+            <div class="card-footer">
+                <a class="btn btn-success btn-sm btn-block" href="{% url 'backend-create_pair'%}">New Pair</a>
+            </div>
+        </div>
+    </div>
+
+	<div class="col-sm-6">
+        <div class="card text-center text-light bg-dark mb-3">
+            <div class="card-header">
+                <h5 class="card-title">Total Tests Completed</h5>
+            </div>
+            <div class="card-body">
+                <h3 class="card-title">{{ total_tests }}</h3>
+            </div>
+            <div class="card-footer">
+                <a class="btn btn-warning btn-sm btn-block" href="{% url 'backend-rankings'%}">Rankings</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="row table-responsive-sm">
+    <div class="card-body">
+        <table class="card-body table table-hover table-dark">
+            <tr>
+                <th class="text-center">Sequence</th>
+                <th class="text-center">Primary image</th>
+                <th class="d-none d-md-table-cell">Caption of Primary image</th>
+                <th class="text-center">Secondary image</th>
+                <th class="d-none d-md-table-cell">Caption of Secondary image</th>
+                <th></th>
+            </tr>
+
+            {% for i in pairs %}
+                <tr>
+                    <td class="text-center">{{ i.id }}</td>
+                    <td class="text-center">
+                        <button type="button" class="btn" data-toggle="modal" data-target="#pri{{ i.id }}">
+                            <img src="{{i.image_pri.url}}" alt="{{i.image_pri}}" width="50"/>
+                        </button>
+                        <!-- Primary picture Modal -->
+                        <div class="modal text-dark" id="pri{{ i.id }}">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+
+                                    <!-- Modal Header -->
+                                    <div class="modal-header">
+                                        <h4 class="modal-title">{{i.image_pri}}</h4>
+                                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                    </div>
+
+                                    <!-- Modal body -->
+                                    <div class="modal-body text-center">
+                                        <img src="{{i.image_pri.url}}" alt="{{i.image_pri}}" width="350"/>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+
+                    <td class="d-none d-md-table-cell">{{i.caption_pri_el |safe}}<br/>{{i.caption_pri_en |safe}}</td>
+
+                    <td class="text-center">
+                        <button type="button" class="btn" data-toggle="modal" data-target="#sec{{ i.id }}">
+                            <img src="{{i.image_sec.url}}" alt="{{i.image_sec}}" width="50"/>
+                        </button>
+                        <!-- Secondary picture Modal -->
+                        <div class="modal text-dark" id="sec{{ i.id }}">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+
+                                    <!-- Modal Header -->
+                                    <div class="modal-header">
+                                        <h4 class="modal-title">{{i.image_sec}}</h4>
+                                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                    </div>
+
+                                    <!-- Modal body -->
+                                    <div class="modal-body text-center">
+                                        <img src="{{i.image_sec.url}}" alt="{{i.image_sec}}" width="350"/>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+
+                    <td class="d-none d-md-table-cell">{{i.caption_sec_el |safe}}<br/>{{i.caption_sec_en |safe}}</td>
+
+                    <td>
+                        <a class="btn btn-sm btn-primary mb-1" href="{% url 'backend-pair' i.id %}">Details</a><br/>
+                        <a class="btn btn-sm btn-info mb-1" href="{% url 'backend-update_pair' i.id %}">Update</a><br/>
+                        <a class="btn btn-sm btn-danger mb-1" href="{% url 'backend-delete_pair' i.id %}">Delete</a>
+                    </td>
+                </tr>
+            {% endfor %}
+        </table>
+
+</section>
+
+{% endblock %}

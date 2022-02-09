@@ -1,0 +1,68 @@
+{% extends "pages/frontend/main.html" %}
+{% load static %}
+
+{% block content %}
+
+{#    <div class="" id="countdown">    </div>#}
+
+<div class="description-progress alert d-none alert-dismissible fade show">
+    <div class="progress">
+        <div class="progress-bar progress-bar-striped progress-bar-animated" style="width:{{ progress_bar }}%">{{ len_pairs_done }} of {{ count_starting_pairs }}</div>
+    </div>
+    <button type="button" class="close" data-dismiss="alert">&times;</button>
+    <p class="pt-2 description">{{ description|safe }}</p>
+</div>
+
+<form method="POST" id="next-form">
+    {% csrf_token %}
+    <input type="hidden" id="id_next_t" name="t" value="" />
+    <input type="hidden" name="Post_name" value="next-image" />
+    <button class="btn btn-success btn-lg pointer_none d-none" type="submit" id="next_button">Next <span class='oi oi-chevron-right'></span></button>
+</form>
+
+<div class="alert alert-dismissible d-none" id="alert-score">
+    <button type="button" class="close" data-dismiss="alert">&times;</button>
+    <h1 class="" id="total-score">accurate</h1>
+</div>
+
+<div class="container-fluid vh-100 d-flex align-items-center">
+    <div class="container-fluid">
+        <div class="row align-items-center">
+
+            <section class="col-8 pl-3 pr-2 column-box text-center">
+                <div class="image-box-pri">
+                    <img class="image-fit" id="img_pri" src="{{ pair_object.image_pri.url }}" alt="{{ pair_object.image_pri }}"/>
+                </div>
+                <div class="p-0 m-0 spacer">&nbsp;</div>
+                <div class="text-center caption-pri">
+                    <h4 class="caption-text rounded">{{ caption_primary|safe }}</h4>
+                </div>
+            </section>
+
+            <button class="btn btn-primary btn-lg" id="confirm_button">Confirm <span class="oi oi-check"></span></button>
+
+            <section class="col-4 pr-3 pl-2 column-box text-center">
+                <div class="image-box-sec">
+                    <img class="image-fit" id="img_sec" src="{{ pair_object.image_sec.url }}" alt="{{ pair_object.image_sec}}"/>
+                </div>
+                <div class="p-0 m-0 spacer">&nbsp;</div>
+                <div class="text-center caption-sec">
+                    <h5 class="caption-text rounded">{{ caption_secondary|safe }}</h5>
+                </div>
+            </section>
+        </div>
+    </div>
+</div>
+
+<script>
+    let filename_pri = "{{ filename_pri }}";
+    let filename_sec = "{{ filename_sec }}";
+    let countdown_per_pic = {{ countdown_per_pic }};
+    let spot_pri = {{ spot_pri|safe }};
+    let spot_sec = {{ spot_sec|safe }};
+</script>
+
+<!-- Load main.js -->
+<script src="{% static 'pages/js/main.js' %}" ></script>
+
+{% endblock %}

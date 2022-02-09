@@ -1,0 +1,25 @@
+{% extends "pages/frontend/main.html" %}
+
+{% block content %}
+
+{%  include 'pages/frontend/navbar.html' %}
+
+<div class="container">
+    <div class="m-3 text-center"><a href="{% url 'frontend-start'%}" type="button" class="btn btn-primary btn-lg">End</a></div>
+        <table class="table bg-light table-hover instructions-box">
+            <thead>
+                <tr><th scope="col"></th><th scope="col">Αποτελέσματα</th></tr>
+            </thead>
+            <tbody>
+                <tr><th>Συνολικός χρόνος:</th><td>{{ total_time }}</td></tr>
+                <tr><th>Μέσος χρόνος αναζήτησης:</th><td>{{ aver_search_time }} </td></tr>
+            </tbody>
+        </table>
+        <h1 class="text-success py-2 display-2 text-center">Ευχαριστώ!</h1>
+        <h3 class="text-light">Επιτυχία:</h3><div class="progress" style="height:50px"><div class="progress-bar" style="width:{{ percent_complete }}%;height:50px"><span style="font-size: 1rem;">{{ percent_complete }}%</span></div>
+    </div>
+</div>
+
+{%  include 'pages/frontend/footer.html' %}
+
+{% endblock %}

@@ -1,0 +1,21 @@
+{% extends "registration/main.html" %}
+{% load crispy_forms_filters %}
+
+{% block content %}
+
+<div class="container">
+    <div class="card text-center">
+        <div class="card-header"><a class="mr-4" href="/" target="_blank"><img src="/media/logo_el.png" width="250" alt="Logo"/></a> </div>
+        <div class="card-body">
+            <h2 class="p-2">Σύνδεση / Log in</h2>
+            <form method="post" action="" class="form-group">
+                {% csrf_token %}
+                {{ form|crispy }}
+                <input type="submit" class="btn btn-success" value="Log in"/>
+            </form>
+        </div>
+        <div class="card-footer">© 2020 Περικλής Περικλέους - Παν. Πατρών: Τμήμα ΗM&TY</div>
+    </div>
+</div>
+
+{% endblock %}

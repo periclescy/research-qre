@@ -1,0 +1,64 @@
+{%  extends 'pages/backend/main.html' %}
+
+{% block content %}
+
+<header class="my-2 mx-auto py-0"><h1 class="text-center text-light">Rankings</h1></header>
+
+<section class="row table-responsive-sm">
+    <div class="card-body bg-light">
+        <table id="myTable" class="card-body table table-hover table-light">
+            <thead>
+                <tr>
+                    <th class="text-center"><a href="#" title="Ζεύγος" data-toggle="popover" data-trigger="focus" data-content="Αναγνωριστικός αριθμός (id) κάθε ζεύγους. Λειτουργεί και σαν σύνδεσμος προεπισκόπισης του ζεύγους">Pair</a></th>
+                    <th class="text-center"><a href="#" title="Επιτυχίες" data-toggle="popover" data-trigger="focus" data-content="Οι επιτυχημένες προσπάθειες συνολικά. Περιλαμβάνει όλες τις προσπάθειες που ευστοχία είναι 80% και άνω.">Success</a></th>
+                    <th class="text-center"><a href="#" title="Αποτυχίες" data-toggle="popover" data-trigger="focus" data-content="Αποτυχημένες προσπάθειες συνολικά. Περιλαμβάνει όλες τις προσπάθειες που ευστοχία είναι κάτω από 80% καθώς και τις προσπάθειες όπου έλειξε ο χρόνος">Failure</a></th>
+                    <th class="text-center"><a href="#" title="Ευστοχία (%)" data-toggle="popover" data-trigger="focus" data-content="Το ποσοστό αυτό είναι ο μέσος όρος της ακρίβειας όλων των προσπαθειών.">Accuracy (%)</a></th>
+                    <th class="text-center"><a href="#" title="Χρονική Απόδοση (%)" data-toggle="popover" data-trigger="focus" data-content="Αυτός είναι ο μέσος χρόνος που χρειάστηκαν οι χρήστες για το εκάστοτε ζεύγος. Είναι δηλαδή ο χρόνος από την εμφάνιση του ζεύγους μέχρι να κατοχυρώθεί η επιλογή του χρήστη.">Response (sec)</a></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for i in rank %}
+                <tr>
+                    <td class="text-center"><a href="{% url 'backend-pair' i.pair %}" target="_blank" rel="noopener noreferrer">{{ i.pair }}</a></td>
+                    <td class="text-center">{{ i.success }}</td>
+                    <td class="text-center">{{ i.failure }}</td>
+                    <td class="text-center">{{ i.accuracy|floatformat:"1" }}</td>
+                    <td class="text-center">{{ i.response|floatformat:"0" }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+            <tfoot>
+                <tr>
+                    <th class="text-center"><a href="#" title="Ζεύγος" data-toggle="popover" data-trigger="focus" data-content="Αναγνωριστικός αριθμός (id) κάθε ζεύγους. Λειτουργεί και σαν σύνδεσμος προεπισκόπισης του ζεύγους">Pair</a></th>
+                    <th class="text-center"><a href="#" title="Επιτυχίες" data-toggle="popover" data-trigger="focus" data-content="Οι επιτυχημένες προσπάθειες συνολικά. Περιλαμβάνει όλες τις προσπάθειες που ευστοχία είναι 80% και άνω.">Success</a></th>
+                    <th class="text-center"><a href="#" title="Αποτυχίες" data-toggle="popover" data-trigger="focus" data-content="Αποτυχημένες προσπάθειες συνολικά. Περιλαμβάνει όλες τις προσπάθειες που ευστοχία είναι κάτω από 80% καθώς και τις προσπάθειες όπου έλειξε ο χρόνος">Failure</a></th>
+                    <th class="text-center"><a href="#" title="Ευστοχία (%)" data-toggle="popover" data-trigger="focus" data-content="Το ποσοστό αυτό είναι ο μέσος όρος της ακρίβειας όλων των προσπαθειών.">Accuracy</a></th>
+                    <th class="text-center"><a href="#" title="Χρονική Απόδοση (%)" data-toggle="popover" data-trigger="focus" data-content="Το ποσοστό αυτό είναι ο μέσος όρος των χρονικών αποδόσεων όλων των προσπαθειών. Είναι δηλαδή η χρονική επίδοση των χρηστών μέχρι να κατοχυρώσουν την επιλογή τους.">Response</a></th>
+                </tr>
+            </tfoot>
+
+        </table>
+    </div>
+
+</section>
+
+{% if not rank %}
+    <h6 class="text-white text-center">
+        No results to show.
+    </h6>
+{% endif %}
+
+            <!-- Datatables -->
+        <script src="https://cdn.datatables.net/1.10.22/js/jquery.dataTables.min.js" ></script>
+        <script src="https://cdn.datatables.net/1.10.22/js/dataTables.bootstrap4.min.js"></script>
+        <script>/** Initializing DataTables table **/
+            $('#myTable').DataTable({"order": [[3, 'desc']],});
+        </script>
+
+<script>
+    $(document).ready(function(){
+        $('[data-toggle="popover"]').popover();
+    });
+</script>
+
+{% endblock %}

@@ -1,0 +1,61 @@
+{% extends 'pages/backend/main.html' %}
+{% load crispy_forms_filters %}
+{% load static %}
+{% block content %}
+
+    <header class="my-2 mx-auto py-0"><h1 class="display-5 text-center text-light">Options</h1></header>
+
+    <div class="row">
+        <div class="col-md-10 offset-md-1 mx-auto">
+            <div class="card bg-dark text-light">
+                <div class=" text-center card-body">
+                    <form action="" method="POST">
+                        {% csrf_token %}
+                        {{ form.media }}
+                        <div class="row">
+                            <div class="col-md-4">
+                                {{ form.sample_count|as_crispy_field }}
+                            </div>
+                            <div class="col-md-4">
+                                {{ form.countdown_per_pic|as_crispy_field }}
+                            </div>
+                            <div class="col-md-4">
+                                {{ form.language|as_crispy_field }}
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                {{ form.headline_el|as_crispy_field }}
+                            </div>
+                            <div class="col-md-6">
+                                {{ form.headline_en|as_crispy_field }}
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                {{ form.footer_el|as_crispy_field }}
+                            </div>
+                            <div class="col-md-6">
+                                {{ form.footer_en|as_crispy_field }}
+                            </div>
+                        </div>
+                         <div class="row">
+                            <div class="col-md-6">
+                                {{ form.instructions_el|as_crispy_field}}
+                            </div>
+                            <div class="col-md-6">
+                                {{ form.instructions_en|as_crispy_field}}
+                            </div>
+                        </div>
+                        <a class="btn btn-outline-secondary" href="{% url 'backend-dashboard' %}" >Cancel</a>
+                        <input class="btn btn-success" type="submit" value="Submit" />
+                    </form>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+
+{% endblock %}
