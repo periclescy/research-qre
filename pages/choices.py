@@ -22,19 +22,32 @@ age = [
 
 education = [
     ("", "---"),
-    ("primary", "Πρωτοβάθμια / Primary"),
-    ("secondary", "Δευτεροβάθμια / Secondary"),
-    ("undergrad ", "Προπτυχιακό / Undergrad "),
+    ("gymnasium", "Γυμνάσιο / Gymnasium"),
+    ("lyceum", "Λύκειο - Τεχνική Σχολή / Lyceum"),
     ("BSc", "Πτυχίο / Bachelor"),
     ("MSc", "Μεταπτυχιακό / Master's"),
     ("PhD", "Διδακτορικό / Doctorate"),
 ]
 
-knowledge = [
+district = [
     ("", "---"),
-    ("1", "Λίγες ή καθόλου / Little or no knowledge"),
-    ("2", "Γενικές / General"),
-    ("3", "Σχετικές / Intermediate"),
-    ("4", "Προχωρημένες / Advanced"),
-    ("5", "Ειδικές / Specialist"),
+    ("lemesos", "Λεμεσός/ Λεμεσός"),
+    ("nicosia", "Λευκωσία / Nicosia"),
+    ("larnaca", "Λάρνακα / Larnaca"),
+    ("paphos", "Πάφος / Paphos"),
+    ("ammochostos", "Αμμόχωστος / Ammochostos"),
+    ("kyrenia", "Κερύνεια / Kyrenia"),
+]
+
+residence = [
+    ("", "---"),
+    ("city", "Πόλη / City"),
+    ("suburb", "Προάστιο / Suburb"),
+    ("village", "Χωριό / Village"),
+]
+
+answer_category = [
+    ("boolean", "True / False"),
+    ("likert6", "6 point Likert"),
+    ("likert7", "7 point Likert"),
 ]

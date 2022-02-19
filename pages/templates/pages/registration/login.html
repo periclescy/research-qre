@@ -5,16 +5,19 @@
 
 <div class="container">
     <div class="card text-center">
-        <div class="card-header"><a class="mr-4" href="/" target="_blank"><img src="/media/logo_el.png" width="250" alt="Logo"/></a> </div>
+        <div class="card-header"><a class="mr-4" href="/" target="_blank"><img src="/media/logo.png" width="300" alt="Logo"/></a> </div>
         <div class="card-body">
-            <h2 class="p-2">Σύνδεση / Log in</h2>
-            <form method="post" action="" class="form-group">
-                {% csrf_token %}
-                {{ form|crispy }}
-                <input type="submit" class="btn btn-success" value="Log in"/>
-            </form>
+            <div class="row"><h2 class="p-2">Σύνδεση / Log in</h2></div>
+            <div class="row">
+                <form method="post" action="" class="form-group">
+                    {% csrf_token %}
+                    {{ form|crispy }}
+                    <br/>
+                    <input type="submit" class="btn btn-outline-dark" value="Log in"/>
+                </form>
+            </div>
         </div>
-        <div class="card-footer">© 2020 Περικλής Περικλέους - Παν. Πατρών: Τμήμα ΗM&TY</div>
+        <div class="card-footer">© 2022 Regnabytes Ltd</div>
     </div>
 </div>
 

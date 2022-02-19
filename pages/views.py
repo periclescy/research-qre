@@ -1,4 +1,3 @@
-import random
 import datetime
 import json
 
@@ -30,8 +29,8 @@ def login_page(request):
             # Return an 'invalid login' error message.
             messages.info(request, 'Username or Password is incorrect')
 
-    logo = 'logo_el'
-    footer = getattr((Option.objects.get(id=1)), 'footer_el')
+    logo = 'logo'
+    footer = Option.objects.get(id=1).footer
 
     context = {
         'logo': logo,
@@ -54,40 +53,40 @@ def start(request, lang="EL"):
     print('----------- WELCOME -----------')  # Welcome message
 
     # --- Check the language from url  --- #
-    choices = {'el': ('flag_el.png', 'logo_el.png', 'caption_pri_el', 'caption_sec_el', 'description_el', 'headline_el',
-                      'instructions_el', 'footer_el'),
-               'en': ('flag_en.png', 'logo_en.png', 'caption_pri_en', 'caption_sec_en', 'description_en', 'headline_en',
-                      'instructions_en', 'footer_en')}
-    (flag, logo, caption_pri, caption_sec, description, headline, instructions, footer) = \
-        choices.get(lang, (
-            'flag_el.png', 'logo_el.png', 'caption_pri_el', 'caption_sec_el', 'description_el', 'headline_el',
-            'instructions_el', 'footer_el'))
-    print('Language: is set to ', lang)  # For debugging purposes
+    # choices = {'el': ('flag_el.png', 'logo_el.png', 'caption_pri_el', 'caption_sec_el', 'description_el', 'headline_el',
+    #                   'instructions_el', 'footer_el'),
+    #            'en': ('flag_en.png', 'logo.png', 'caption_pri_en', 'caption_sec_en', 'description_en', 'headline_en',
+    #                   'instructions_en', 'footer_en')}
+    # (flag, logo, caption_pri, caption_sec, description, headline, instructions, footer) = \
+    #     choices.get(lang, (
+    #         'flag_el.png', 'logo_el.png', 'caption_pri_el', 'caption_sec_el', 'description_el', 'headline_el',
+    #         'instructions_el', 'footer_el'))
+    # print('Language: is set to ', lang)  # For debugging purposes
 
     # --- Fetch headline, instructions & footer from Database Options  --- #
-    headline = getattr((Option.objects.get(id=1)), headline)
-    instructions = getattr((Option.objects.get(id=1)), instructions)
-    footer = getattr((Option.objects.get(id=1)), footer)
+    headline = Option.objects.get(id=1).headline
+    instructions = Option.objects.get(id=1).instructions
+    footer = Option.objects.get(id=1).footer
 
     # --- Query to get all Pairs --- #
-    pairs = Pair.objects.values_list('id', flat=True)  # Get all Pairs id's as a list
-    print('All possible pairs are: ', pairs)  # For debugging purposes
+    # pairs = Pair.objects.values_list('id', flat=True)  # Get all Pairs id's as a list
+    # print('All possible pairs are: ', pairs)  # For debugging purposes
 
     # --- Get countdown time that is set from Database Options  --- #
-    countdown_per_pic = Option.objects.get(id=1).countdown_per_pic
+    # countdown_per_pic = Option.objects.get(id=1).countdown_per_pic
 
     # --- Get n pairs randomly --- #
-    n = Option.objects.get(id=1).sample_count  # Get value from Database (Option)
-    if n <= len(pairs):
-        pairs_remaining = random.sample(list(pairs), n)
-        print("Random sample", n, "out of ", len(pairs), "pairs of pictures")
-    else:
-        pairs_remaining = random.sample(list(pairs), len(pairs))
-        print("Not enough pictures for", n, "samples. Test will proceed with the maximum",
-              len(pairs), "pairs of pictures")
-
-    print('Available pairs: ', pairs_remaining)  # For debugging purposes
-    pairs_done = []  # Create an empty pictures done list
+    # n = Option.objects.get(id=1).sample_count  # Get value from Database (Option)
+    # if n <= len(pairs):
+    #     pairs_remaining = random.sample(list(pairs), n)
+    #     print("Random sample", n, "out of ", len(pairs), "pairs of pictures")
+    # else:
+    #     pairs_remaining = random.sample(list(pairs), len(pairs))
+    #     print("Not enough pictures for", n, "samples. Test will proceed with the maximum",
+    #           len(pairs), "pairs of pictures")
+    #
+    # print('Available pairs: ', pairs_remaining)  # For debugging purposes
+    # pairs_done = []  # Create an empty pictures done list
 
     # --- Get correct session from Database --- #
     max_session = Data.objects.aggregate(Max('session'))  # Query that gets maximum value of all sessions
@@ -101,24 +100,24 @@ def start(request, lang="EL"):
     # --- Create Session variables with new values --- #
     request.session['session_id'] = session_id
 
-    request.session['flag'] = flag
-    request.session['logo'] = logo
+    # request.session['flag'] = flag
+    # request.session['logo'] = logo
     request.session['footer'] = footer
 
-    request.session['countdown_per_pic'] = countdown_per_pic
-    request.session['pairs_remaining'] = pairs_remaining
-    request.session['pairs_done'] = pairs_done
-    request.session['count_starting_pairs'] = len(pairs_remaining)
-
-    request.session['caption_pri'] = caption_pri
-    request.session['caption_sec'] = caption_sec
-    request.session['description'] = description
+    # request.session['countdown_per_pic'] = countdown_per_pic
+    # request.session['pairs_remaining'] = pairs_remaining
+    # request.session['pairs_done'] = pairs_done
+    # request.session['count_starting_pairs'] = len(pairs_remaining)
+    #
+    # request.session['caption_pri'] = caption_pri
+    # request.session['caption_sec'] = caption_sec
+    # request.session['description'] = description
 
     form = UserForm()
 
     context = {
-        'flag': flag,
-        'logo': logo,
+        # 'flag': flag,
+        # 'logo': logo,
         'headline': headline,
         'instructions': instructions,
         'footer': footer,
