@@ -1,7 +1,6 @@
 # Research QRE
 
-Research QRE is a tool for preparing and analyzing data of research questionnaire.
-
+Research QRE is a tool for preparing and collecting data for research questionnaires.
 ### Requirements:
 - Python 3.9
 
