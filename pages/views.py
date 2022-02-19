@@ -49,7 +49,7 @@ def logout_page(request):
 #   FRONT-END
 # -------------------------------------------------------------------------------------------------------------------- #
 @login_required
-def start(request, lang="EL"):
+def start(request):
     print('----------- WELCOME -----------')  # Welcome message
 
     # --- Check the language from url  --- #
@@ -67,6 +67,7 @@ def start(request, lang="EL"):
     headline = Option.objects.get(id=1).headline
     instructions = Option.objects.get(id=1).instructions
     footer = Option.objects.get(id=1).footer
+    logo = 'logo.png'
 
     # --- Query to get all Pairs --- #
     # pairs = Pair.objects.values_list('id', flat=True)  # Get all Pairs id's as a list
@@ -101,7 +102,7 @@ def start(request, lang="EL"):
     request.session['session_id'] = session_id
 
     # request.session['flag'] = flag
-    # request.session['logo'] = logo
+    request.session['logo'] = logo
     request.session['footer'] = footer
 
     # request.session['countdown_per_pic'] = countdown_per_pic
@@ -117,7 +118,7 @@ def start(request, lang="EL"):
 
     context = {
         # 'flag': flag,
-        # 'logo': logo,
+        'logo': logo,
         'headline': headline,
         'instructions': instructions,
         'footer': footer,

@@ -1,7 +1,7 @@
-languages = [
-    ("EL", "EL"),
-    ("EN", "EN"),
-]
+# languages = [
+#     ("EL", "EL"),
+#     ("EN", "EN"),
+# ]
 
 gender = [
     ("", "---"),

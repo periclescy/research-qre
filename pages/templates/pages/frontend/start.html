@@ -5,7 +5,7 @@
 
 {% if user.username == 'user' %}
     {% include 'pages/frontend/navbar.html' %}
-{% elif user.username == 'curator' or user.username == 'admin' %}
+{% elif user.username == 'christina' or user.username == 'admin' %}
     {% include 'pages/backend/navbar.html' %}
 {% endif %}
 
@@ -20,17 +20,17 @@
                         <div class="col-6 offset-3">
                             <h2>{{ headline }}</h2>
                         </div>
-                        <div class="col-3">
-                            <div class="dropdown">
-                                <button type="button" class="btn dropdown-toggle" data-toggle="dropdown">
-                                    <img src="/media/{{ flag }}" alt="flag" width="40" height="40"/>
-                                </button>
-                                <div class="dropdown-menu">
-                                    <a class="dropdown-item" href="/el"><img src="/media/flag_el.png" alt="flag_el" width="40" height="40" /> Ελληνικά</a>
-                                    <a class="dropdown-item" href="/en"><img src="/media/flag_en.png" alt="flag_en" width="40" height="40" /> English</a>
-                                </div>
-                            </div>
-                        </div>
+{#                        <div class="col-3">#}
+{#                            <div class="dropdown">#}
+{#                                <button type="button" class="btn dropdown-toggle" data-toggle="dropdown">#}
+{#                                    <img src="/media/{{ flag }}" alt="flag" width="40" height="40"/>#}
+{#                                </button>#}
+{#                                <div class="dropdown-menu">#}
+{#                                    <a class="dropdown-item" href="/el"><img src="/media/flag_el.png" alt="flag_el" width="40" height="40" /> Ελληνικά</a>#}
+{#                                    <a class="dropdown-item" href="/en"><img src="/media/flag_en.png" alt="flag_en" width="40" height="40" /> English</a>#}
+{#                                </div>#}
+{#                            </div>#}
+{#                        </div>#}
                     </div>
                 </div>
                 <div class="card-body text-left">
@@ -51,29 +51,30 @@
                         <input type="hidden" id="id_start_t" name="t" value="">
 
 
-                        <div class="row">
+                        <div class="row py-2">
                             <div class="col">{{ form.gender |as_crispy_field  }}</div>
                         </div>
 
-                        <div class="row">
+                        <div class="row py-2">
                             <div class="col">{{ form.age |as_crispy_field  }}</div>
                         </div>
 
-                        <div class="row">
+                        <div class="row py-2">
                             <div class="col">{{ form.education |as_crispy_field }}</div>
                         </div>
 
-                        <div class="row">
-                            <div class="col">{{ form.sector |as_crispy_field }}</div>
+                        <div class="row py-2">
+                            <div class="col">{{ form.district |as_crispy_field }}</div>
                         </div>
 
-                        <div class="row">
-                            <div class="col">{{ form.knowledge |as_crispy_field }}</div>
+                        <div class="row py-2">
+                            <div class="col">{{ form.residence |as_crispy_field }}</div>
                         </div>
 
                         <input type='hidden' name="Post_name" value="next-image" />
-
-                        <input class="btn btn-danger btn-lg" id="submit" type="submit" value="Start" />
+                        <div class="row mx-auto my-4">
+                            <input class="btn btn-danger btn-lg w-25" id="submit" type="submit" value="Start" />
+                        </div>
                     </form>
                 </div>
 {#                <div class="card-footer text-center">#}

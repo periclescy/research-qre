@@ -2,13 +2,13 @@
 
 <nav class="navbar navbar-expand-sm navbar-dark nav-bg-color">
     <div class="container">
-        <a class="navbar-brand mr-4" href="/" target="_blank"><img src="/media/logo.png" height="60" alt="Logo"/></a>
+        <a class="navbar-brand mr-4" href="/" target="_blank">Research QRE</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggle" aria-controls="navbarToggle" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
 
         <div class="collapse navbar-collapse" id="navbarToggle">
-            <ul class="navbar-nav mr-auto">
+            <ul class="navbar-nav me-auto">
                 <li class="nav-item">
                     <a class="nav-link {% if "dashboard" in request.path %}text-light{% endif %}" href="{% url 'backend-dashboard' %}">Dashboard</a>
                 </li>
@@ -25,7 +25,7 @@
             <ul class="navbar-nav">
                 {% if user.is_authenticated %}
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="LoginDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <a class="nav-link dropdown-toggle" href="#" id="LoginDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             <span class="oi oi-people"></span> {{user.username}}
                         </a>
                         <div class="dropdown-menu dropdown-menu-right" aria-labelledby="LoginDropdown">

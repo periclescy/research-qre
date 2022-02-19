@@ -21,7 +21,7 @@ class UserForm(ModelForm):
     gender = forms.ChoiceField(choices=gender, required=True, label='Φύλο / Gender')
     age = forms.ChoiceField(choices=age, required=True, label='Ηλικία / Age')
     education = forms.ChoiceField(choices=education, required=True, label='Επίπεδο Μόρφωσης / Education Level')
-    # district = forms.CharField(choices=district, required=True, label='Επαρχία / District')
+    district = forms.ChoiceField(choices=district, required=True, label='Επαρχία / District')
     residence = forms.ChoiceField(choices=residence, required=True, label='Διαμονή / Residence')
 
     class Meta:
