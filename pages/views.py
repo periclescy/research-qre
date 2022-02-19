@@ -592,8 +592,8 @@ def home(request):
 
 @login_required
 def dashboard(request):
-    pairs = Pair.objects.all()
-    total_pairs = pairs.count()
+    questions = Question.objects.all()
+    total_questions = questions.count()
     total_tests = Data.objects.all().aggregate(Max('session'))['session__max']
 
     user = get_user(request)
@@ -601,8 +601,8 @@ def dashboard(request):
         return redirect('/')
 
     context = {
-        'pairs': pairs,
-        'total_pairs': total_pairs,
+        'questions': questions,
+        'total_questions': total_questions,
         'total_tests': total_tests
     }
     return render(request, 'pages/backend/dashboard.html', context)

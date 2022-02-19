@@ -2,12 +2,12 @@
 
 {% block content %}
 
-<header class="my-2 mx-auto py-0"><h1 class="text-center text-light">Dashboard</h1></header>
+<header class="py-3 mx-auto"><h1 class="text-center text-light">Dashboard</h1></header>
 
 {% if messages %}
     {% for message in messages %}
-        <div  {% if message.tags %} class="alert alert-{{ message.tags }} alert-dismissible fade show" {% endif %}>
-            <button type="button" class="close" data-dismiss="alert">&times;</button>
+        <div  {% if message.tags %} class="alert alert-{{ message.tags }} alert-dismissible fade show w-50 mx-auto" role="alert" {% endif %}>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             {{ message }}
         </div>
     {% endfor %}
@@ -17,7 +17,7 @@
 	<div class="col-sm-6">
         <div class="card text-center text-light bg-dark mb-3">
             <div class="card-header">
-                <h5 class="card-title">Total Pairs</h5>
+                <h5 class="card-title">Total Questions</h5>
             </div>
             <div class="card-body">
                 <h3 class="card-title">{{ total_pairs }}</h3>

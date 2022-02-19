@@ -3,7 +3,6 @@ from django import forms
 from django.forms import ModelForm
 
 from .models import *
-from .choices import *
 
 
 class OptionForm(ModelForm):
@@ -18,11 +17,11 @@ class OptionForm(ModelForm):
 
 class UserForm(ModelForm):
     # session = forms.CharField()
-    gender = forms.ChoiceField(choices=gender, required=True, label='Φύλο / Gender')
-    age = forms.ChoiceField(choices=age, required=True, label='Ηλικία / Age')
-    education = forms.ChoiceField(choices=education, required=True, label='Επίπεδο Μόρφωσης / Education Level')
-    district = forms.ChoiceField(choices=district, required=True, label='Επαρχία / District')
-    residence = forms.ChoiceField(choices=residence, required=True, label='Διαμονή / Residence')
+    gender = forms.ChoiceField(choices=Gender.choices, required=True, label='Φύλο / Gender')
+    age = forms.ChoiceField(choices=Age.choices, required=True, label='Ηλικία / Age')
+    education = forms.ChoiceField(choices=Education.choices, required=True, label='Επίπεδο Μόρφωσης / Education Level')
+    district = forms.ChoiceField(choices=District.choices, required=True, label='Επαρχία / District')
+    residence = forms.ChoiceField(choices=Residence.choices, required=True, label='Διαμονή / Residence')
 
     class Meta:
         model = User
@@ -31,7 +30,7 @@ class UserForm(ModelForm):
 
 class QuestionForm(ModelForm):
     question = forms.CharField(label='Question', widget=CKEditorWidget(config_name='question'))
-    answer_category = forms.ChoiceField(choices=answer_category, required=True, label='Answer Category')
+    answer_category = forms.ChoiceField(choices=AnswerCategory.choices, required=True, label='Answer Category')
 
     class Meta:
         model = User
