@@ -609,245 +609,146 @@ def dashboard(request):
 
 
 @login_required
-def pair(request, pk):
-    pairs = Pair.objects.all()
-    this_pair = pairs.get(id=pk)
-    this_target = this_pair.pair_target
+def question(request, pk):
+    questions = Question.objects.all()
+    this_question = questions.get(id=pk)
 
     user = get_user(request)
     if user.username == 'user':
         return redirect('/')
 
-    x_primary = this_target.x_pri / this_pair.width_pri * 100
-    y_primary = this_target.y_pri / this_pair.height_pri * 100
-    width_primary = this_target.w_pri / this_pair.width_pri * 100
-    height_primary = this_target.h_pri / this_pair.height_pri * 100
-
-    if this_target.x_sec and this_target.y_sec and this_target.w_sec and this_target.h_sec:
-        x_secondary = this_target.x_sec / this_pair.width_sec * 100
-        y_secondary = this_target.y_sec / this_pair.height_sec * 100
-        width_secondary = this_target.w_sec / this_pair.width_sec * 100
-        height_secondary = this_target.h_sec / this_pair.height_sec * 100
-        target_sec = 'd-block'
-        target_exist = ''
-
-    else:
-        x_secondary = None
-        y_secondary = None
-        width_secondary = None
-        height_secondary = None
-        target_sec = 'd-none'
-        target_exist = 'no-target'
-
-    form = PairForm(instance=this_pair)
+    form = QuestionForm(instance=this_question)
 
     context = {
-        'this_pair': this_pair,
+        'this_question': this_question,
         'form': form,
-
-        'x_primary': x_primary,
-        'y_primary': y_primary,
-        'width_primary': width_primary,
-        'height_primary': height_primary,
-
-        'x_secondary': x_secondary,
-        'y_secondary': y_secondary,
-        'width_secondary': width_secondary,
-        'height_secondary': height_secondary,
-        'target_sec': target_sec,
-        'target_exist': target_exist,
     }
-    return render(request, 'pages/backend/pair.html', context)
+    return render(request, 'pages/backend/question.html', context)
 
 
 @login_required
-def preview_pair(request, pk):
-    pairs = Pair.objects.all()
-    this_pair = pairs.get(id=pk)
-    this_target = this_pair.pair_target
+def preview(request, pk):
+    questions = Question.objects.all()
+    this_question = questions.get(id=pk)
 
     user = get_user(request)
     if user.username == 'user':
         return redirect('/')
 
-    x_primary = this_target.x_pri / this_pair.width_pri * 100
-    y_primary = this_target.y_pri / this_pair.height_pri * 100
-    width_primary = this_target.w_pri / this_pair.width_pri * 100
-    height_primary = this_target.h_pri / this_pair.height_pri * 100
-
-    if this_target.x_sec and this_target.y_sec and this_target.w_sec and this_target.h_sec:
-        x_secondary = this_target.x_sec / this_pair.width_sec * 100
-        y_secondary = this_target.y_sec / this_pair.height_sec * 100
-        width_secondary = this_target.w_sec / this_pair.width_sec * 100
-        height_secondary = this_target.h_sec / this_pair.height_sec * 100
-        target_sec = 'd-block'
-        target_exist = ''
-
-    else:
-        x_secondary = None
-        y_secondary = None
-        width_secondary = None
-        height_secondary = None
-        target_sec = 'd-none'
-        target_exist = 'no-target'
-
     context = {
-        'this_pair': this_pair,
-        'x_primary': x_primary,
-        'y_primary': y_primary,
-        'width_primary': width_primary,
-        'height_primary': height_primary,
-        'x_secondary': x_secondary,
-        'y_secondary': y_secondary,
-        'width_secondary': width_secondary,
-        'height_secondary': height_secondary,
-        'target_exist': target_exist,
-        'target_sec': target_sec,
+        'this_question': this_question,
     }
     return render(request, 'pages/backend/preview.html', context)
 
 
 @login_required
-def create_pair(request):
+def create(request):
     user = get_user(request)
     if user.username == 'user':
         return redirect('/')
 
-    form1 = PairForm()
-    form2 = TargetForm()
+    form1 = QuestionForm()
+    # form2 = TargetForm()
     if request.method == 'POST':
-        form1 = PairForm(request.POST, request.FILES)
-        form2 = TargetForm(request.POST)
+        form1 = QuestionForm(request.POST, request.FILES)
+        # form2 = TargetForm(request.POST)
         print(request.POST)
 
         if form1.is_valid():
-            print('Pair Form is valid')
+            print('Question Form is valid')
         else:
             print('form1 is NOT valid')
 
-        if form2.is_valid():
-            print('form2 is valid')
-        else:
-            print('form2 is NOT valid')
+        # if form2.is_valid():
+        #     print('form2 is valid')
+        # else:
+        #     print('form2 is NOT valid')
 
-        if form1.is_valid() and form2.is_valid():
+        if form1.is_valid():
+            # and form2.is_valid():
             print('All forms are valid')
             model1 = form1.save()
-            model2 = form2.save(commit=False)
-            model2.pair = model1
-            model2.save()
+            # model2 = form2.save(commit=False)
+            # model2.pair = model1
+            # model2.save()
             messages.success(request, 'New pair successfully created!')
             return redirect('/dashboard')
 
         else:
             print('Something wrong with forms')
-            form1 = PairForm()
-            form2 = TargetForm()
+            form1 = QuestionForm()
+            # form2 = TargetForm()
             messages.error(request, 'Error: Your entries are not valid!')
-            return render(request, 'pages/backend/create_update_form.html', {'form1': form1, 'form2': form2})
+            return render(request, 'pages/backend/create_update_form.html', {'form1': form1})
 
     context = {
         'form1': form1,
-        'form2': form2
+        # 'form2': form2
     }
     return render(request, 'pages/backend/create_update_form.html', context)
 
 
 @login_required
-def update_pair(request, pk):
+def update(request, pk):
     user = get_user(request)
     if user.username == 'user':
         return redirect('/')
 
-    this_pair = Pair.objects.get(id=pk)
-    form1 = PairForm(instance=this_pair)
-    form2 = TargetForm(instance=this_pair.pair_target)
-
-    x_primary = this_pair.pair_target.x_pri / this_pair.width_pri * 100
-    y_primary = this_pair.pair_target.y_pri / this_pair.height_pri * 100
-    width_primary = this_pair.pair_target.w_pri / this_pair.width_pri * 100
-    height_primary = this_pair.pair_target.h_pri / this_pair.height_pri * 100
-
-    if this_pair.pair_target.x_sec and this_pair.pair_target.y_sec and this_pair.pair_target.w_sec and this_pair.pair_target.h_sec:
-        x_secondary = this_pair.pair_target.x_sec / this_pair.width_sec * 100
-        y_secondary = this_pair.pair_target.y_sec / this_pair.height_sec * 100
-        width_secondary = this_pair.pair_target.w_sec / this_pair.width_sec * 100
-        height_secondary = this_pair.pair_target.h_sec / this_pair.height_sec * 100
-        target_sec = 'd-block'
-        target_exist = ''
-
-    else:
-        x_secondary = None
-        y_secondary = None
-        width_secondary = None
-        height_secondary = None
-        target_sec = 'd-none'
-        target_exist = 'no-target'
+    this_question = Question.objects.get(id=pk)
+    form1 = QuestionForm(instance=this_question)
+    # form2 = TargetForm(instance=this_pair.pair_target)
 
     if request.method == 'POST':
-        form1 = PairForm(request.POST, request.FILES, instance=this_pair)
-        form2 = TargetForm(request.POST, instance=this_pair.pair_target)
+        form1 = QuestionForm(request.POST, request.FILES, instance=this_question)
+        # form2 = TargetForm(request.POST, instance=this_pair.pair_target)
 
         if form1.is_valid():
-            print('Pair Form is valid')
+            print('Question Form is valid')
         else:
             print('form1 is NOT valid')
 
-        if form2.is_valid():
-            print('form2 is valid')
-        else:
-            print('form2 is NOT valid')
+        # if form2.is_valid():
+        #     print('form2 is valid')
+        # else:
+        #     print('form2 is NOT valid')
 
-        if form1.is_valid() and form2.is_valid():
+        if form1.is_valid():
+            # and form2.is_valid():
             print('All forms are valid')
             model1 = form1.save()
-            model2 = form2.save(commit=False)
-            model2.pair = model1
-            model2.save()
+            # model2 = form2.save(commit=False)
+            # model2.pair = model1
+            # model2.save()
             messages.success(request, 'Your changes successfully applied!')
-            success_url = f"/pair/{this_pair.id}"
+            success_url = f"/pair/{this_question.id}"
             return redirect(success_url)
         else:
             print('Something wrong with forms')
-            form1 = PairForm()
-            form2 = TargetForm()
+            form1 = QuestionForm()
+            # form2 = TargetForm()
             messages.error(request, 'Error: Your changes are not valid!')
-            return render(request, 'pages/backend/create_update_form.html', {'form1': form1, 'form2': form2})
+            return render(request, 'pages/backend/create_update_form.html', {'form1': form1})
 
     context = {
-        'this_pair': this_pair,
+        'this_question': this_question,
         'form1': form1,
-        'form2': form2,
-
-        'x_primary': x_primary,
-        'y_primary': y_primary,
-        'width_primary': width_primary,
-        'height_primary': height_primary,
-
-        'x_secondary': x_secondary,
-        'y_secondary': y_secondary,
-        'width_secondary': width_secondary,
-        'height_secondary': height_secondary,
-        'target_sec': target_sec,
-        'target_exist': target_exist
-
     }
     return render(request, 'pages/backend/create_update_form.html', context)
 
 
 @login_required
-def delete_pair(request, pk):
+def delete(request, pk):
     user = get_user(request)
     if user.username == 'user':
         return redirect('/')
 
-    this_pair = Pair.objects.get(id=pk)
+    this_question = Question.objects.get(id=pk)
     if request.method == "POST":
-        this_pair.delete()
-        messages.success(request, 'The pair successfully deleted!')
+        this_question.delete()
+        messages.success(request, 'The question successfully deleted!')
         return redirect('/dashboard')
     context = {
-        'item': this_pair
+        'item': this_question
     }
     return render(request, 'pages/backend/delete.html', context)
 

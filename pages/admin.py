@@ -43,7 +43,7 @@ admin.site.register(MyUser, MyUserIEAdmin)
 
 # ------------- QUESTION ------------- #
 class PostQuestion(admin.ModelAdmin):
-    list_display = ('id', 'question', 'answer_category')
+    list_display = ('id', 'question', 'section', 'answer_category')
 
 
 class MyQuestion(Question):

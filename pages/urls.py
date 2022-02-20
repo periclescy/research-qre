@@ -13,12 +13,12 @@ urlpatterns = [
                   path('start', views.start, name='frontend-start'),
                   path('home', views.home, name='frontend-home'),
                   path('dashboard', views.dashboard, name='backend-dashboard'),
-                  path('pair/<str:pk>/', views.pair, name='backend-pair'),
+                  path('question/<str:pk>/', views.question, name='backend-question'),
                   path('rankings', views.rankings, name='backend-rankings'),
-                  path('create_pair', views.create_pair, name='backend-create_pair'),
-                  path('update_pair/<str:pk>/', views.update_pair, name='backend-update_pair'),
-                  path('preview_pair/<str:pk>/', views.preview_pair, name='backend-preview_pair'),
-                  path('delete_pair/<str:pk>/', views.delete_pair, name='backend-delete_pair'),
+                  path('create', views.create, name='backend-create'),
+                  path('update/<str:pk>/', views.update, name='backend-update'),
+                  path('preview/<str:pk>/', views.preview, name='backend-preview'),
+                  path('delete/<str:pk>/', views.delete, name='backend-delete'),
                   path('options', views.options, name='backend-options'),
 
               ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

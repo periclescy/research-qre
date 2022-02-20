@@ -3,7 +3,7 @@
 {% block content %}
 
 <header class="my-2 mx-auto py-0">
-    <h1 class="text-center text-light">Pair Details</h1>
+    <h1 class="text-center text-light">Question Details</h1>
 </header>
 
 {% if messages %}
@@ -17,13 +17,13 @@
 
 <div class="row pb-3">
     <div class="col-3 col-sm-2 offset-sm-2">
-        <a class="btn btn-outline-success btn-sm btn-block" href="{% url 'backend-preview_pair' this_pair.id %}">Preview</a>
+        <a class="btn btn-outline-success btn-sm btn-block" href="{% url 'backend-preview_question' this_pair.id %}">Preview</a>
     </div>
     <div class="col-3 col-sm-2">
-        <a class="btn btn-outline-info btn-sm btn-block" href="{% url 'backend-update_pair' this_pair.id %}">Update</a>
+        <a class="btn btn-outline-info btn-sm btn-block" href="{% url 'backend-update_question' this_pair.id %}">Update</a>
     </div>
     <div class="col-3 col-sm-2">
-        <a class="btn btn-outline-danger btn-sm btn-block" href="{% url 'backend-delete_pair' this_pair.id %}">Delete</a>
+        <a class="btn btn-outline-danger btn-sm btn-block" href="{% url 'backend-delete_question' this_pair.id %}">Delete</a>
     </div>
     <div class="col-3 col-sm-2">
         <a class="btn btn-outline-warning btn-sm btn-block" href="{% url 'backend-rankings'%}">Rankings</a>

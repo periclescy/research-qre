@@ -5,13 +5,13 @@ from ckeditor.fields import RichTextField
 # *** *** Choices Classes *** *** #
 
 class Gender(models.TextChoices):
-    DEF = '', "--"
-    Male = 'M', "Άρρεν / Male"
-    Female = 'F', "Θήλυ / Female"
+    null = '', "--"
+    male = 'M', "Άρρεν / Male"
+    female = 'F', "Θήλυ / Female"
 
 
 class Age(models.TextChoices):
-    DEF = '', "--"
+    null = '', "--"
     u17 = 'u17', "u17"
     r1825 = '18-25', "18-25"
     r2635 = '26-35', "26-35"
@@ -22,7 +22,7 @@ class Age(models.TextChoices):
 
 
 class Education(models.TextChoices):
-    DEF = '', "--"
+    null = '', "--"
     gymnasium = "gymnasium", "Γυμνάσιο / Gymnasium"
     lyceum = "lyceum", "Λύκειο - Τεχνική Σχολή / Lyceum"
     BSc = "BSc", "Πτυχίο / Bachelor"
@@ -31,7 +31,7 @@ class Education(models.TextChoices):
 
 
 class District(models.TextChoices):
-    DEF = '', "--"
+    null = '', "--"
     lemesos = "lemesos", "Λεμεσός/ Λεμεσός"
     nicosia = "nicosia", "Λευκωσία / Nicosia"
     larnaca = "larnaca", "Λάρνακα / Larnaca"
@@ -41,13 +41,20 @@ class District(models.TextChoices):
 
 
 class Residence(models.TextChoices):
-    DEF = '', "--"
+    null = '', "--"
     city = "city", "Πόλη / City"
     suburb = "suburb", "Προάστιο / Suburb"
     village = "village", "Χωριό / Village"
 
 
+class Section(models.TextChoices):
+    null = '', "--"
+    a = "A", "A"
+    b = "B", "B"
+
+
 class AnswerCategory(models.TextChoices):
+    null = '', "--"
     boolean = "boolean", "True / False"
     likert6 = "likert6", "6 point Likert"
     likert7 = "likert7", "7 point Likert"
@@ -66,17 +73,18 @@ class Option(models.Model):
 # ------------- USER ------------- #
 class User(models.Model):
     session = models.IntegerField()
-    gender = models.CharField(max_length=1, choices=Gender.choices, default=Gender.DEF)
-    age = models.CharField(max_length=5, choices=Age.choices, default=Age.DEF)
-    education = models.CharField(max_length=10, choices=Education.choices, default=Education.DEF)
-    district = models.CharField(max_length=12, choices=District.choices, default=District.DEF)
-    residence = models.CharField(max_length=12, choices=Residence.choices, default=Residence.DEF)
+    gender = models.CharField(max_length=1, choices=Gender.choices, default=Gender.null)
+    age = models.CharField(max_length=5, choices=Age.choices, default=Age.null)
+    education = models.CharField(max_length=10, choices=Education.choices, default=Education.null)
+    district = models.CharField(max_length=12, choices=District.choices, default=District.null)
+    residence = models.CharField(max_length=12, choices=Residence.choices, default=Residence.null)
 
 
 # ------------- QUESTION ------------- #
 class Question(models.Model):
-    question = RichTextField(max_length=500, blank=False)
-    answer_category = models.CharField(max_length=8, choices=AnswerCategory.choices, default=AnswerCategory.boolean)
+    question = RichTextField(max_length=1500, blank=False)
+    section = models.CharField(max_length=1, choices=Section.choices, default=Section.null)
+    answer_category = models.CharField(max_length=8, choices=AnswerCategory.choices, default=AnswerCategory.null)
 
 
 # ------------- DATA ------------- #
