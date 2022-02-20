@@ -647,43 +647,24 @@ def create(request):
     if user.username == 'user':
         return redirect('/')
 
-    form1 = QuestionForm()
-    # form2 = TargetForm()
+    form = QuestionForm()
     if request.method == 'POST':
-        form1 = QuestionForm(request.POST, request.FILES)
-        # form2 = TargetForm(request.POST)
+        form = QuestionForm(request.POST)
         print(request.POST)
 
-        if form1.is_valid():
-            print('Question Form is valid')
-        else:
-            print('form1 is NOT valid')
-
-        # if form2.is_valid():
-        #     print('form2 is valid')
-        # else:
-        #     print('form2 is NOT valid')
-
-        if form1.is_valid():
-            # and form2.is_valid():
+        if form.is_valid():
             print('All forms are valid')
-            model1 = form1.save()
-            # model2 = form2.save(commit=False)
-            # model2.pair = model1
-            # model2.save()
-            messages.success(request, 'New pair successfully created!')
+            model1 = form.save()
+            messages.success(request, 'New Question successfully created!')
             return redirect('/dashboard')
-
         else:
             print('Something wrong with forms')
-            form1 = QuestionForm()
-            # form2 = TargetForm()
+            form = QuestionForm()
             messages.error(request, 'Error: Your entries are not valid!')
-            return render(request, 'pages/backend/create_update_form.html', {'form1': form1})
+            return render(request, 'pages/backend/create_update_form.html', {'form1': form})
 
     context = {
-        'form1': form1,
-        # 'form2': form2
+        'form': form
     }
     return render(request, 'pages/backend/create_update_form.html', context)
 

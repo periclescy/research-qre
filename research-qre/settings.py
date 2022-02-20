@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/2.2/ref/settings/
 
 import os
 import socket
+
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -115,7 +116,6 @@ DATABASES = {
         'NAME': 'mydatabase',
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/2.2/ref/settings/#auth-password-validators
@@ -221,7 +221,7 @@ CKEDITOR_CONFIGS = {
     }
 }
 
-GRAPH_MODELS ={
+GRAPH_MODELS = {
     'all_applications': True,
     'group_models': True,
 }

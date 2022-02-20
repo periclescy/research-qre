@@ -5,9 +5,9 @@
 
 {% block content %}
 
-{% if this_pair  %}
+{% if this_question  %}
 
-    <header class="my-2 mx-auto py-0"><h1 class="text-center text-light">Update Pair</h1></header>
+    <header class="my-2 mx-auto py-0"><h1 class="text-center text-light">Update Question</h1></header>
 
     <div class="row">
         <div class="col-xl-12 mx-auto">
@@ -15,7 +15,7 @@
                 <div class=" text-center card-body">
                     <form method="POST" enctype="multipart/form-data">
                     {% csrf_token %}
-                    {{ form1.media }}
+                    {{ form.media }}
 
                         <div class="row">
                             <div class="col-12">
@@ -23,12 +23,12 @@
                                     <div class="row no-gutters">
                                         <div class="col-md-6">
                                             <div class="card-body">
-                                                {{ form1.description_el |as_crispy_field }}
+                                                {{ form.section |as_crispy_field }}
                                             </div>
                                         </div>
                                         <div class="col-md-6">
                                             <div class="card-body">
-                                                {{ form1.description_en |as_crispy_field }}
+                                                {{ form.answer_category |as_crispy_field }}
                                             </div>
                                         </div>
                                     </div>
@@ -37,44 +37,20 @@
                         </div>
 
                         <div class="row">
-                            <div class="col-lg-6">
+                            <div class="col-lg-12">
                                 <div class="card mb-3" style="max-width: 100%;">
                                     <div class="row no-gutters">
                                         <div class="col-md-5">
                                             <div class="image-box">
-                                                <img class="mw-100 mh-50" src="{{ this_pair.image_pri.url }}" alt="{{ this_pair.image_pri }}"/>
-                                                <div class="target_expired" id="pri-target" style="top: {{y_primary}}%; left: {{x_primary}}%; width: {{width_primary}}%; height: {{height_primary}}%;"></div>
+{#                                                <img class="mw-100 mh-50 {{ target_exist }}" src="{{ this_pair.image_sec.url }}" alt="{{ this_pair.image_sec }}"/>#}
+{#                                                <div class="target_expired {{ target_sec }}" id="sec-target" style="top: {{y_secondary}}%; left: {{x_secondary}}%; width: {{width_secondary}}%; height: {{height_secondary}}%;"></div>#}
                                             </div>
-                                            <p class="card-text"><small class="text-muted">W:{{this_pair.width_pri}} | H:{{this_pair.height_pri}}</small></p>
-                                            <a href="" class="btn btn-outline-dark" data-target="#change-pri-target-modal" data-toggle="modal">Change Target</a>
+{#                                            <p class="card-text"><small class="text-muted">W:{{this_pair.width_sec}} | H:{{this_pair.height_sec}}</small></p>#}
                                         </div>
                                         <div class="col-md-7">
                                             <div class="card-body px-3">
-                                                {{ form1.caption_pri_el |as_crispy_field}}
-                                                {{ form1.caption_pri_en |as_crispy_field}}
-                                                <label for="image_pri">Αλλαγή εικόνας / Change image</label><input type="file" id="image_pri" name="image_pri" onchange="previewFile(this)" data-toggle="modal" data-target="#pri-modal" />
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="col-lg-6">
-                                <div class="card mb-3" style="max-width: 100%;">
-                                    <div class="row no-gutters">
-                                        <div class="col-md-5">
-                                            <div class="image-box">
-                                                <img class="mw-100 mh-50 {{ target_exist }}" src="{{ this_pair.image_sec.url }}" alt="{{ this_pair.image_sec }}"/>
-                                                <div class="target_expired {{ target_sec }}" id="sec-target" style="top: {{y_secondary}}%; left: {{x_secondary}}%; width: {{width_secondary}}%; height: {{height_secondary}}%;"></div>
-                                            </div>
-                                            <p class="card-text"><small class="text-muted">W:{{this_pair.width_sec}} | H:{{this_pair.height_sec}}</small></p>
-                                            <a href="" class="btn btn-outline-dark" data-target="#change-sec-target-modal" data-toggle="modal">Change Target</a>
-                                        </div>
-                                        <div class="col-md-7">
-                                            <div class="card-body px-3">
-                                                {{ form1.caption_sec_el |as_crispy_field}}
-                                                {{ form1.caption_sec_en |as_crispy_field}}
-                                                <label for="image_sec">Αλλαγή εικόνας / Change image</label><input type="file" id="image_sec" name="image_sec" onchange="preview2File(this)" data-toggle="modal" data-target="#sec-modal" />
+{#                                                {{ form.caption_sec_el |as_crispy_field}}#}
+{#                                                {{ form.caption_sec_en |as_crispy_field}}#}
                                             </div>
                                         </div>
                                     </div>
@@ -83,17 +59,10 @@
                         </div>
 
                         <div class="invisible">
-                            {{ form2.x_pri }}
-                            {{ form2.y_pri }}
-                            {{ form2.w_pri }}
-                            {{ form2.h_pri }}
-                            {{ form2.x_sec }}
-                            {{ form2.y_sec }}
-                            {{ form2.w_sec }}
-                            {{ form2.h_sec }}
+
                         </div>
 
-                        <a class="btn btn-outline-secondary" href="{% url 'backend-pair' this_pair.id %}">Cancel</a>
+                        <a class="btn btn-outline-secondary" href="{% url 'backend-question' this_question.id %}">Cancel</a>
                         <input class="btn btn-success" type="submit" value="Submit" />
                     </form>
 
@@ -102,277 +71,11 @@
         </div>
     </div>
 
-    <!-- Primary picture Modal - Image File change -->
-    <div class="modal fade" id="pri-modal" data-backdrop="static" data-keyboard="false">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-
-                <!-- Modal Header -->
-                <div class="modal-header">
-                    <h2>Επιλογή στόχου / Target selection</h2>
-                </div>
-
-                <!-- Modal body -->
-                <div class="modal-body">
-                    <div class="img-container">
-                        <img id="img_pri" src="" style="max-width: 100%" alt=""/>
-                    </div>
-                </div>
-
-                <!-- Modal footer -->
-                <div class="modal-footer text-center">
-                    <button type="button" class="btn btn-secondary" id="cancel-pri" data-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-success" id="set-pri-target" data-dismiss="modal">Set Target</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Secondary picture Modal - Image File change -->
-    <div class="modal fade" id="sec-modal" data-backdrop="static" data-keyboard="false">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-
-                <!-- Modal Header -->
-                <div class="modal-header">
-                    <h2>Επιλογή στόχου / Target selection</h2>
-                </div>
-
-                <!-- Modal body -->
-                <div class="modal-body">
-                    <div class="img-container">
-                        <img id="img_sec" src="" style="max-width: 100%" alt=""/>
-                    </div>
-                </div>
-
-                <!-- Modal footer -->
-                <div class="modal-footer text-center">
-                    <button type="button" class="btn btn-secondary" id="cancel-sec" data-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-outline-success" id="set-sec-no-target" data-dismiss="modal">No Target</button>
-                    <button type="button" class="btn btn-success" id="set-sec-target" data-dismiss="modal">Set Target</button>
-                </div>
-
-            </div>
-        </div>
-    </div>
-
-     <!-- Primary picture Modal - Target change -->
-    <div class="modal fade" id="change-pri-target-modal" data-backdrop="static" data-keyboard="false">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-
-                <!-- Modal Header -->
-                <div class="modal-header">
-                    <h2>Επιλογή στόχου / Target selection</h2>
-                </div>
-
-                <!-- Modal body -->
-                <div class="modal-body">
-                    <div class="img-container">
-                        <img id="img-pri-target" src="{{ this_pair.image_pri.url }}" style="max-width: 100%" alt=""/>
-                    </div>
-                </div>
-
-                <!-- Modal footer -->
-                <div class="modal-footer text-center">
-                    <button type="button" class="btn btn-secondary" id="cancel-pri-change" data-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-success" id="set-pri-change" data-dismiss="modal">Set Target</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Secondary picture Modal - Target change -->
-    <div class="modal fade" id="change-sec-target-modal" data-backdrop="static" data-keyboard="false">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-
-                <!-- Modal Header -->
-                <div class="modal-header">
-                    <h2>Επιλογή στόχου / Target selection</h2>
-                </div>
-
-                <!-- Modal body -->
-                <div class="modal-body">
-                    <div class="img-container">
-                        <img id="img-sec-target" src="{{ this_pair.image_sec.url }}" style="max-width: 100%" alt=""/>
-                    </div>
-                </div>
-
-                <!-- Modal footer -->
-                <div class="modal-footer text-center">
-                    <button type="button" class="btn btn-secondary" id="cancel-sec-change" data-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-outline-success" id="set-sec-no-target-change" data-dismiss="modal">No Target</button>
-                    <button type="button" class="btn btn-success" id="set-sec-target-change" data-dismiss="modal">Set Target</button>
-                </div>
-
-            </div>
-        </div>
-    </div>
-
-
-    <script type="text/javascript">
-
-        let preview = document.getElementById('img_pri');
-        let file_input = document.getElementById('image_pri')
-
-        window.previewFile = function (){
-            let array_of_files = file_input.files
-            let file = array_of_files [array_of_files.length -1];
-            let reader = new FileReader()
-
-            reader.addEventListener('load', function() {
-                preview.src = reader.result
-            }, false)
-
-            if (file) {
-                reader.readAsDataURL(file)
-            }
-         }
-
-
-        let preview2 = document.getElementById('img_sec');
-        let file_input2 = document.getElementById('image_sec')
-
-        window.preview2File = function (){
-            let array_of_files = file_input2.files
-            let file2 = array_of_files [array_of_files.length -1];
-            let reader2 = new FileReader()
-
-            reader2.addEventListener('load', function() {
-                preview2.src = reader2.result
-            }, false)
-
-            if (file2) {
-                reader2.readAsDataURL(file2)
-            }
-        }
-
-        preview.addEventListener('load', function() {
-            let cropper1 = new Cropper(preview, {
-                ready: function () {
-
-                    $("#set-pri-target").on('click', function () {
-                        let dict = cropper1.getData();
-                        document.getElementById('id_x_pri').value = dict['x'];
-                        document.getElementById('id_y_pri').value = dict['y'];
-                        document.getElementById('id_w_pri').value = dict['width'];
-                        document.getElementById('id_h_pri').value = dict['height'];
-                        cropper1.destroy();
-                    })
-                    $("#cancel-pri").on('click', function () {
-                        cropper1.destroy();
-                        window.location.reload(true);
-                    })
-                }
-            })
-        })
-
-
-        preview2.addEventListener('load',function() {
-            let cropper2 = new Cropper(preview2, {
-                ready: function () {
-
-                    $("#set-sec-target").on('click', function () {
-                        let dict = cropper2.getData();
-                        document.getElementById('id_x_sec').value = dict['x'];
-                        document.getElementById('id_y_sec').value = dict['y'];
-                        document.getElementById('id_w_sec').value = dict['width'];
-                        document.getElementById('id_h_sec').value = dict['height'];
-                        cropper2.destroy();
-                    })
-
-                    $("#set-sec-no-target").on('click', function () {
-                        document.getElementById('id_x_sec').value = null;
-                        document.getElementById('id_y_sec').value = null;
-                        document.getElementById('id_w_sec').value = null;
-                        document.getElementById('id_h_sec').value = null;
-                        cropper2.destroy();
-                    })
-
-                    $("#cancel-sec").on('click', function () {
-                        cropper2.destroy();
-                        window.location.reload(true);
-                    })
-                }
-            })
-        })
-
-        /** Target Change trigger **/
-
-             /** Target Change trigger **/
-            window.addEventListener('DOMContentLoaded', function () {
-            let preview3 = document.getElementById('img-pri-target');
-            let preview4 = document.getElementById('img-sec-target');
-
-            let cropper3;
-            let cropper4;
-
-            $('#change-pri-target-modal').on('shown.bs.modal', function () {
-                cropper3 = new Cropper(preview3, {
-                    ready: function () {
-                        $("#set-pri-change").on('click', function () {
-                            let dict = cropper3.getData();
-                            document.getElementById('id_x_pri').value = dict['x'];
-                            document.getElementById('id_y_pri').value = dict['y'];
-                            document.getElementById('id_w_pri').value = dict['width'];
-                            document.getElementById('id_h_pri').value = dict['height'];
-                            cropper3.destroy();
-                        })
-                        $("#cancel-pri-change").on('click', function () {
-                            cropper3.destroy();
-                            window.location.reload(true);
-                        })
-                    }
-                });
-            }).on('hidden.bs.modal', function () {
-                cropper3.destroy();
-            });
-
-
-            $('#change-sec-target-modal').on('shown.bs.modal', function () {
-                cropper4 = new Cropper(preview4, {
-                    ready: function () {
-
-                        $("#set-sec-target-change").on('click', function () {
-                            let dict = cropper4.getData();
-                            document.getElementById('id_x_sec').value = dict['x'];
-                            document.getElementById('id_y_sec').value = dict['y'];
-                            document.getElementById('id_w_sec').value = dict['width'];
-                            document.getElementById('id_h_sec').value = dict['height'];
-                            cropper4.destroy();
-                        })
-
-                        $("#set-sec-no-target-change").on('click', function () {
-                            document.getElementById('id_x_sec').value = null;
-                            document.getElementById('id_y_sec').value = null;
-                            document.getElementById('id_w_sec').value = null;
-                            document.getElementById('id_h_sec').value = null;
-                            cropper4.destroy();
-                        })
-
-                        $("#cancel-sec-change").on('click', function () {
-                            cropper4.destroy();
-                            window.location.reload(true);
-                        })
-                    }
-                })
-            })
-
-        });
-
-
-
-        /** ******************** **/
-
-
-
-    </script>
 
 
 {% else %}
 
-    <header class="my-2 mx-auto py-0"><h1 class="text-center text-light">Create New Pair</h1></header>
+    <header class="my-2 mx-auto py-0"><h1 class="text-center text-light">Create New Question</h1></header>
 
     {% if messages %}
         {% for message in messages %}
@@ -388,185 +91,28 @@
             <div class=" text-center card-body">
                 <form method="POST" enctype="multipart/form-data">
                     {% csrf_token %}
-                    {{ form1.media }}
+{#                    {{ form.media }}#}
                         <div class="row">
-                            <div class="col-md-4"><label for="image_pri">Ανέβασμα Αρχικής εικόνας / Upload Primary image</label><input type="file" id="image_pri" name="image_pri" onchange="previewFile(this)" data-toggle="modal" data-target="#pri-modal" /></div>
-                            <div class="col-md-4">{{ form1.caption_pri_el |as_crispy_field  }}</div>
-                            <div class="col-md-4">{{ form1.caption_pri_en |as_crispy_field }}</div>
+                            <div class="col-lg-5 offset-lg-1">{{ form.section | as_crispy_field  }}</div>
+                            <div class="col-lg-5">{{ form.answer_category | as_crispy_field }}</div>
                         </div>
 
                         <div class="row">
-                            <div class="col-md-4"><label for="image_sec">Ανέβασμα Δευτερεύουσας εικόνας / Upload Secondary image</label><input type="file" id="image_sec" name="image_sec" onchange="preview2File(this)" data-toggle="modal" data-target="#sec-modal" /></div>
-                            <div class="col-md-4">{{ form1.caption_sec_el |as_crispy_field}}</div>
-                            <div class="col-md-4">{{ form1.caption_sec_en |as_crispy_field }}</div>
-                        </div>
+                             <div class="col-lg-8 offset-lg-2">{{ form.question | as_crispy_field }}</div>
 
-                        <div class="row">
-                            <div class="col-md-6">{{ form1.description_el |as_crispy_field }}</div>
-                            <div class="col-md-6">{{ form1.description_en |as_crispy_field }}</div>
-                        </div>
 
-                    <div class="invisible">
-                        {{ form2.x_pri }}
-                        {{ form2.y_pri }}
-                        {{ form2.w_pri }}
-                        {{ form2.h_pri }}
-                        {{ form2.x_sec }}
-                        {{ form2.y_sec }}
-                        {{ form2.w_sec }}
-                        {{ form2.h_sec }}
+                    <div class="row">
+                        <div class="col"><a class="btn btn-outline-secondary" href="{% url 'backend-dashboard'%}">Cancel</a></div>
+                        <div class="col"><input class="btn btn-success" type="submit" value="Submit" /></div>
                     </div>
 
-                    <a class="btn btn-outline-secondary" href="{% url 'backend-dashboard'%}">Cancel</a>
-                    <input class="btn btn-success" type="submit" value="Submit" />
+
                 </form>
             </div>
         </div>
     </div>
 
 
-    <!-- Primary picture Modal -->
-    <div class="modal fade" id="pri-modal" data-backdrop="static" data-keyboard="false">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-
-                <!-- Modal Header -->
-                <div class="modal-header">
-                    <h2>Επιλογή στόχου / Target selection</h2>
-                </div>
-
-                <!-- Modal body -->
-                <div class="modal-body">
-                    <div class="img-container">
-                        <img id="img_pri" src="" style="max-width: 100%" alt=""/>
-                    </div>
-                </div>
-
-                <!-- Modal footer -->
-                <div class="modal-footer text-center">
-                    <button type="button" class="btn btn-secondary" id="cancel-pri" data-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-success" id="set-pri-target" data-dismiss="modal">Set Target</button>
-                </div>
-
-            </div>
-        </div>
-    </div>
-
-    <!-- Secondary picture Modal -->
-    <div class="modal fade" id="sec-modal" data-backdrop="static" data-keyboard="false">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-
-                <!-- Modal Header -->
-                <div class="modal-header">
-                    <h2>Επιλογή στόχου / Target selection</h2>
-                </div>
-
-                <!-- Modal body -->
-                <div class="modal-body">
-                    <div class="img-container">
-                        <img id="img_sec" src="" style="max-width: 100%" alt=""/>
-                    </div>
-                </div>
-
-                <!-- Modal footer -->
-                <div class="modal-footer text-center">
-                    <button type="button" class="btn btn-secondary" id="cancel-sec" data-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-outline-success" id="set-sec-no-target" data-dismiss="modal">No Target</button>
-                    <button type="button" class="btn btn-success" id="set-sec-target" data-dismiss="modal">Set Target</button>
-                </div>
-
-            </div>
-        </div>
-    </div>
-
-    <script type="text/javascript">
-
-        let preview = document.getElementById('img_pri');
-        let file_input = document.getElementById('image_pri')
-
-        window.previewFile = function (){
-            let array_of_files = file_input.files
-            let file = array_of_files [array_of_files.length -1];
-            let reader = new FileReader()
-
-            reader.addEventListener('load', function() {
-                preview.src = reader.result
-            }, false)
-
-            if (file) {
-                reader.readAsDataURL(file)
-            }
-         }
-
-        let preview2 = document.getElementById('img_sec');
-        let file_input2 = document.getElementById('image_sec')
-
-        window.preview2File = function (){
-            let array_of_files = file_input2.files
-            let file2 = array_of_files [array_of_files.length -1];
-            let reader2 = new FileReader()
-
-            reader2.addEventListener('load', function() {
-                preview2.src = reader2.result
-            }, false)
-
-            if (file2) {
-                reader2.readAsDataURL(file2)
-            }
-         }
-
-        preview.addEventListener('load', function() {
-            let cropper1 = new Cropper(preview, {
-                ready: function () {
-
-                    $("#set-pri-target").on('click', function () {
-                        let dict = cropper1.getData();
-                        document.getElementById('id_x_pri').value = dict['x'];
-                        document.getElementById('id_y_pri').value = dict['y'];
-                        document.getElementById('id_w_pri').value = dict['width'];
-                        document.getElementById('id_h_pri').value = dict['height'];
-                        cropper1.destroy();
-                    })
-                    $("#cancel-pri").on('click', function () {
-                        cropper1.destroy();
-                        window.location.reload(true);
-                    })
-                }
-            })
-        })
-
-
-        preview2.addEventListener('load',function() {
-            let cropper2 = new Cropper(preview2, {
-                ready: function () {
-
-                    $("#set-sec-target").on('click', function () {
-                        let dict = cropper2.getData();
-                        document.getElementById('id_x_sec').value = dict['x'];
-                        document.getElementById('id_y_sec').value = dict['y'];
-                        document.getElementById('id_w_sec').value = dict['width'];
-                        document.getElementById('id_h_sec').value = dict['height'];
-                        cropper2.destroy();
-                    })
-
-                    $("#set-sec-no-target").on('click', function () {
-                        document.getElementById('id_x_sec').value = null;
-                        document.getElementById('id_y_sec').value = null;
-                        document.getElementById('id_w_sec').value = null;
-                        document.getElementById('id_h_sec').value = null;
-                        cropper2.destroy();
-                    })
-
-                    $("#cancel-sec").on('click', function () {
-                        cropper2.destroy();
-                        window.location.reload(true);
-                    })
-                }
-            })
-        })
-
-    </script>
 
 {% endif %}
 
