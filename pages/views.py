@@ -609,7 +609,7 @@ def dashboard(request):
 
 
 @login_required
-def question(request, pk):
+def details(request, pk):
     questions = Question.objects.all()
     this_question = questions.get(id=pk)
 
@@ -623,7 +623,7 @@ def question(request, pk):
         'this_question': this_question,
         'form': form,
     }
-    return render(request, 'pages/backend/question.html', context)
+    return render(request, 'pages/backend/details.html', context)
 
 
 @login_required
@@ -676,43 +676,26 @@ def update(request, pk):
         return redirect('/')
 
     this_question = Question.objects.get(id=pk)
-    form1 = QuestionForm(instance=this_question)
-    # form2 = TargetForm(instance=this_pair.pair_target)
+    form = QuestionForm(instance=this_question)
 
     if request.method == 'POST':
-        form1 = QuestionForm(request.POST, request.FILES, instance=this_question)
-        # form2 = TargetForm(request.POST, instance=this_pair.pair_target)
+        form = QuestionForm(request.POST, request.FILES, instance=this_question)
 
-        if form1.is_valid():
-            print('Question Form is valid')
-        else:
-            print('form1 is NOT valid')
-
-        # if form2.is_valid():
-        #     print('form2 is valid')
-        # else:
-        #     print('form2 is NOT valid')
-
-        if form1.is_valid():
-            # and form2.is_valid():
+        if form.is_valid():
             print('All forms are valid')
-            model1 = form1.save()
-            # model2 = form2.save(commit=False)
-            # model2.pair = model1
-            # model2.save()
+            model1 = form.save()
             messages.success(request, 'Your changes successfully applied!')
-            success_url = f"/pair/{this_question.id}"
+            success_url = f"/details/{this_question.id}"
             return redirect(success_url)
         else:
             print('Something wrong with forms')
             form1 = QuestionForm()
-            # form2 = TargetForm()
             messages.error(request, 'Error: Your changes are not valid!')
-            return render(request, 'pages/backend/create_update_form.html', {'form1': form1})
+            return render(request, 'pages/backend/create_update_form.html', {'form': form})
 
     context = {
         'this_question': this_question,
-        'form1': form1,
+        'form': form,
     }
     return render(request, 'pages/backend/create_update_form.html', context)
 

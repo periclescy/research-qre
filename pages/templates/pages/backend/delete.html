@@ -2,29 +2,23 @@
 {% load static %}
 {% block content %}
 
-<header class="my-2 mx-auto py-0"><h1 class="display-5 text-center text-light">Delete pair</h1></header>
-
-<div class="row">
-    <div class="col text-center w-auto">
-        <div class="card p-3">
-            <div class="card-img-top pt-3">
-                <div class="image-box">
-                    <img src="{{ item.image_pri.url }}" height="250" alt="{{ item.image_pri }}"/>
-                    <img src="{{ item.image_sec.url }}" height="250" alt="{{ item.image_sec }}"/>
+<header class="my-2 py-0"><h1 class="text-center text-light">Delete</h1></header>
+<div class="container">
+    <div class="row">
+        <div class="col text-center w-auto">
+            <div class="card p-3">
+                <div class="card-body">
+                    <p>{{item.question|safe}}</p>
+                    <p>Are you sure you want to delete this question?</p>
+                    <form action="" method="POST">
+                        {% csrf_token %}
+                        <a class="btn btn-outline-secondary" href="{% url 'backend-details' item.id %}">Cancel</a>
+                        <input class="btn btn-danger" type="submit"  value="Confirm"/>
+                    </form>
                 </div>
-            </div>
-            <div class="card-body">
-                <p>{{item.caption_pri_en|safe}} --- {{item.caption_sec_en|safe}}</p>
-                <p>Are you sure you want to delete this pair?</p>
-                <form action="" method="POST">
-                    {% csrf_token %}
-                    <a class="btn btn-outline-secondary" href="{% url 'backend-pair' item.id %}">Cancel</a>
-                    <input class="btn btn-danger" type="submit"  value="Confirm"/>
-                </form>
             </div>
         </div>
     </div>
 </div>
-
 
 {% endblock %}
