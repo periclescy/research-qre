@@ -12,6 +12,7 @@ urlpatterns = [
                   # path('<str:lang>/', views.start, name='frontend-start-lang'),
                   path('start', views.start, name='frontend-start'),
                   path('home', views.home, name='frontend-home'),
+                  path('section', views.section, name='backend-section'),
                   path('dashboard', views.dashboard, name='backend-dashboard'),
                   path('details/<str:pk>/', views.details, name='backend-details'),
                   path('rankings', views.rankings, name='backend-rankings'),

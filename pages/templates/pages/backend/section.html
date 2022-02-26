@@ -1,0 +1,80 @@
+{%  extends 'pages/backend/main.html' %}
+{% load crispy_forms_filters %}
+{#{% load static %}#}
+
+{% block content %}
+
+<header class="py-3"><h1 class="text-center text-light">Sections</h1></header>
+
+<div class="container">
+    {% if messages %}
+        {% for message in messages %}
+            <div  {% if message.tags %} class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert" {% endif %}>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+
+<section class="row">
+	<div class="col-sm-6">
+        <div class="card text-center text-light bg-dark mb-3">
+            <div class="card-header">
+                <h5 class="card-title">Total Questions</h5>
+            </div>
+            <div class="card-body">
+                <h3 class="card-title">{{ total_sections }}</h3>
+            </div>
+            <div class="card-footer">
+                <a class="btn btn-success btn-sm btn-block" href="{% url 'backend-create'%}">New Question</a>
+            </div>
+        </div>
+    </div>
+
+	<div class="col-sm-6">
+        <div class="card text-center text-light bg-dark mb-3">
+            <div class="card-header">
+                <h5 class="card-title">Total Tests Completed</h5>
+            </div>
+            <div class="card-body">
+                <h3 class="card-title">{{ total_tests }}</h3>
+            </div>
+            <div class="card-footer">
+                <a class="btn btn-warning btn-sm btn-block" href="{% url 'backend-rankings'%}">Rankings</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="table-responsive-md">
+        <table class="table table-hover table-dark">
+            <tr>
+                <th class="text-center">Sequence</th>
+                <th class="text-center">Section</th>
+                <th class="text-center">Answer Category</th>
+                <th></th>
+            </tr>
+
+            {% for i in sections %}
+                {% for z in forms_list %}
+                <tr>
+                    <form method="POST" enctype="multipart/form-data">
+                    {% csrf_token %}
+{#                    {{ form.media }}#}
+                        <td class="text-center">{{ i.id }}</td>
+                        <td class="text-center">{{z.section}}</td>
+                        <td class="text-center">{{z.answer_category}}</td>
+                        <td>
+                            <input class="btn btn-sm btn-info" type="submit" value="Update" />
+                            <a class="btn btn-sm btn-danger" href="{% url 'backend-delete' i.id %}">Delete</a>
+                        </td>
+                         <input type="hidden" name="section_id" value="{{ i.id }}">
+                    </form>
+                </tr>
+                {% endfor %}
+            {% endfor %}
+        </table>
+</section>
+
+</div>
+{% endblock %}

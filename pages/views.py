@@ -670,6 +670,68 @@ def create(request):
 
 
 @login_required
+def section(request):
+    user = get_user(request)
+    if user.username == 'user':
+        return redirect('/')
+
+    if request.method == 'POST':
+        this_section = Section.objects.get(id=request.POST.get("section_id"))
+        form = SectionForm(request.POST, request.FILES, instance=this_section)
+
+        if form.is_valid():
+            print('Form is valid.')
+            model1 = form.save()
+            messages.success(request, 'Your changes successfully applied!')
+            success_url = f"/section"
+            return redirect(success_url)
+        else:
+            print('Something wrong with form.')
+            form1 = SectionForm()
+            messages.error(request, 'Error: Your changes are not valid!')
+            return render(request, 'pages/backend/section.html', {'form': form})
+
+    sections = Section.objects.all()
+    total_sections = sections.count()
+    total_tests = Data.objects.all().aggregate(Max('session'))['session__max']
+
+    forms_list = []
+    for z in sections:
+        forms_list.append(SectionForm(instance=z))
+
+    context = {
+        'sections': sections,
+        'total_sections': total_sections,
+        'total_tests': total_tests,
+        'forms_list': forms_list
+    }
+    return render(request, 'pages/backend/section.html', context)
+    # this_section = Question.objects.get(id=pk)
+    # form = QuestionForm(instance=this_section)
+
+    # if request.method == 'POST':
+    # form = QuestionForm(request.POST, request.FILES, instance=this_question)
+
+    # if form.is_valid():
+    #     print('All forms are valid')
+    #     model1 = form.save()
+    #     messages.success(request, 'Your changes successfully applied!')
+    # success_url = f"/details/{this_question.id}"
+    #     return redirect(success_url)
+    # else:
+    #     print('Something wrong with forms')
+    #     form1 = QuestionForm()
+    # messages.error(request, 'Error: Your changes are not valid!')
+    # return render(request, 'pages/backend/create_update_form.html', {'form': form})
+
+    # context = {
+        # 'this_question': this_question,
+        # 'form': form,
+    # }
+    # return render(request, 'pages/backend/create_update_form.html', context)
+
+
+@login_required
 def update(request, pk):
     user = get_user(request)
     if user.username == 'user':

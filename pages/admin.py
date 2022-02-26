@@ -41,9 +41,28 @@ admin.site.register(User, PostUser)
 admin.site.register(MyUser, MyUserIEAdmin)
 
 
+# ------------- SECTION ------------- #
+class PostSection(admin.ModelAdmin):
+    list_display = ('id', 'section', 'answer_category')
+
+
+class MySection(Question):
+    class Meta:
+        proxy = True
+        verbose_name_plural = "~ Import/Export Sections"
+
+
+class MySectionIEAdmin(ImportExportModelAdmin):
+    pass
+
+
+admin.site.register(Section, PostSection)
+admin.site.register(MySection, MySectionIEAdmin)
+
+
 # ------------- QUESTION ------------- #
 class PostQuestion(admin.ModelAdmin):
-    list_display = ('id', 'question', 'section', 'answer_category')
+    list_display = ('id', 'section', 'question', 'section')
 
 
 class MyQuestion(Question):
@@ -77,7 +96,6 @@ class MyDataIEAdmin(ImportExportModelAdmin):
 
 admin.site.register(Data, PostData)
 admin.site.register(MyData, MyDataIEAdmin)
-
 
 # ------------- RANK ------------- #
 # class PostRank(admin.ModelAdmin):

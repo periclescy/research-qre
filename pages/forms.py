@@ -28,10 +28,17 @@ class UserForm(ModelForm):
         fields = '__all__'
 
 
+class SectionForm(ModelForm):
+    section = forms.ChoiceField(choices=SectionCategory.choices, required=True, label='Section')
+    answer_category = forms.ChoiceField(choices=AnswerCategory.choices, required=True, label='Answer Category')
+
+    class Meta:
+        model = Section
+        fields = '__all__'
+
+
 class QuestionForm(ModelForm):
     question = forms.CharField(label='Question', widget=CKEditorWidget(config_name='question'))
-    section = forms.ChoiceField(choices=Section.choices, required=True, label='Section')
-    answer_category = forms.ChoiceField(choices=AnswerCategory.choices, required=True, label='Answer Category')
 
     class Meta:
         model = Question
