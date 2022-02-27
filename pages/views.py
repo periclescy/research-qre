@@ -675,7 +675,8 @@ def section(request):
     if user.username == 'user':
         return redirect('/')
 
-    if request.method == 'POST':
+    form = SectionForm()
+    if request.method == 'POST' and request.POST.get("section_id"):
         this_section = Section.objects.get(id=request.POST.get("section_id"))
         form = SectionForm(request.POST, request.FILES, instance=this_section)
 
@@ -691,6 +692,21 @@ def section(request):
             messages.error(request, 'Error: Your changes are not valid!')
             return render(request, 'pages/backend/section.html', {'form': form})
 
+    elif request.method == 'POST':
+        form = SectionForm(request.POST)
+        print(request.POST)
+
+        if form.is_valid():
+            print('Form is valid')
+            model = form.save()
+            messages.success(request, 'New Section successfully created!')
+            return redirect('/section')
+        else:
+            print('Something wrong with the form')
+            form = SectionForm()
+            messages.error(request, 'Error: Your entries are not valid!')
+            return render(request, 'pages/backend/section.html', {'form': form})
+
     sections = Section.objects.all()
     total_sections = sections.count()
     total_tests = Data.objects.all().aggregate(Max('session'))['session__max']
@@ -703,7 +719,8 @@ def section(request):
         'sections': sections,
         'total_sections': total_sections,
         'total_tests': total_tests,
-        'forms_list': forms_list
+        'forms_list': forms_list,
+        'form': form
     }
     return render(request, 'pages/backend/section.html', context)
     # this_section = Question.objects.get(id=pk)

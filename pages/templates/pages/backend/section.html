@@ -16,35 +16,35 @@
         {% endfor %}
     {% endif %}
 
-<section class="row">
-	<div class="col-sm-6">
-        <div class="card text-center text-light bg-dark mb-3">
-            <div class="card-header">
-                <h5 class="card-title">Total Questions</h5>
-            </div>
-            <div class="card-body">
-                <h3 class="card-title">{{ total_sections }}</h3>
-            </div>
-            <div class="card-footer">
-                <a class="btn btn-success btn-sm btn-block" href="{% url 'backend-create'%}">New Question</a>
-            </div>
-        </div>
-    </div>
-
-	<div class="col-sm-6">
-        <div class="card text-center text-light bg-dark mb-3">
-            <div class="card-header">
-                <h5 class="card-title">Total Tests Completed</h5>
-            </div>
-            <div class="card-body">
-                <h3 class="card-title">{{ total_tests }}</h3>
-            </div>
-            <div class="card-footer">
-                <a class="btn btn-warning btn-sm btn-block" href="{% url 'backend-rankings'%}">Rankings</a>
-            </div>
-        </div>
-    </div>
-</section>
+{#<section class="row">#}
+{#	<div class="col-sm-6">#}
+{#        <div class="card text-center text-light bg-dark mb-3">#}
+{#            <div class="card-header">#}
+{#                <h5 class="card-title">Total Questions</h5>#}
+{#            </div>#}
+{#            <div class="card-body">#}
+{#                <h3 class="card-title">{{ total_sections }}</h3>#}
+{#            </div>#}
+{#            <div class="card-footer">#}
+{#                <a class="btn btn-success btn-sm btn-block" href="{% url 'backend-create'%}">New Question</a>#}
+{#            </div>#}
+{#        </div>#}
+{#    </div>#}
+{##}
+{#	<div class="col-sm-6">#}
+{#        <div class="card text-center text-light bg-dark mb-3">#}
+{#            <div class="card-header">#}
+{#                <h5 class="card-title">Total Tests Completed</h5>#}
+{#            </div>#}
+{#            <div class="card-body">#}
+{#                <h3 class="card-title">{{ total_tests }}</h3>#}
+{#            </div>#}
+{#            <div class="card-footer">#}
+{#                <a class="btn btn-warning btn-sm btn-block" href="{% url 'backend-rankings'%}">Rankings</a>#}
+{#            </div>#}
+{#        </div>#}
+{#    </div>#}
+{#</section>#}
 
 <section class="table-responsive-md">
         <table class="table table-hover table-dark">
@@ -73,6 +73,29 @@
                 </tr>
                 {% endfor %}
             {% endfor %}
+        </table>
+</section>
+
+<section class="table-responsive-md py-3">
+    <h2 class="text-light">Add new Section</h2>
+        <table class="table table-hover table-dark">
+            <tr>
+                <th class="text-center"></th>
+                <th class="text-center">Section</th>
+                <th class="text-center">Answer Category</th>
+                <th></th>
+            </tr>
+            <tr>
+                <form method="POST" enctype="multipart/form-data">
+                    {% csrf_token %}
+{#                    {{ form.media }}#}
+                        <td class="text-center">Add new</td>
+                        <td class="text-center">{{form.section}}</td>
+                        <td class="text-center">{{form.answer_category}}</td>
+                        <td><input class="btn btn-sm btn-success" type="submit" value="Create" /></td>
+{#                        <input type="hidden" name="section_id" value="{{ i.id }}">#}
+                </form>
+            </tr>
         </table>
 </section>
 
