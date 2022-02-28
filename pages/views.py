@@ -676,53 +676,71 @@ def section(request):
         return redirect('/')
 
     form = SectionForm()
-    if request.method == 'POST' and request.POST.get("section_id"):
-        this_section = Section.objects.get(id=request.POST.get("section_id"))
-        form = SectionForm(request.POST, request.FILES, instance=this_section)
-
-        if form.is_valid():
-            print('Form is valid.')
-            model1 = form.save()
-            messages.success(request, 'Your changes successfully applied!')
-            success_url = f"/section"
-            return redirect(success_url)
-        else:
-            print('Something wrong with form.')
-            form1 = SectionForm()
-            messages.error(request, 'Error: Your changes are not valid!')
-            return render(request, 'pages/backend/section.html', {'form': form})
-
-    elif request.method == 'POST':
-        form = SectionForm(request.POST)
-        print(request.POST)
-
-        if form.is_valid():
-            print('Form is valid')
-            model = form.save()
-            messages.success(request, 'New Section successfully created!')
-            return redirect('/section')
-        else:
-            print('Something wrong with the form')
-            form = SectionForm()
-            messages.error(request, 'Error: Your entries are not valid!')
-            return render(request, 'pages/backend/section.html', {'form': form})
-
     sections = Section.objects.all()
     total_sections = sections.count()
     total_tests = Data.objects.all().aggregate(Max('session'))['session__max']
 
-    forms_list = []
+    instance_list = []
     for z in sections:
-        forms_list.append(SectionForm(instance=z))
+        instance_list.append(SectionForm(instance=z))
+    sections_instance_list = zip(sections, instance_list)
+
+    if request.method == 'POST':
+        print(request.POST.get("action_status"))
+
+        if request.POST.get("action_status") == 'UPDATE':
+            this_section = Section.objects.get(id=request.POST.get("section_id"))
+            form = SectionForm(request.POST, request.FILES, instance=this_section)
+
+            if form.is_valid():
+                print('Form is valid.')
+                model1 = form.save()
+                messages.success(request, 'Your changes successfully applied!')
+                success_url = f"/section"
+                return redirect(success_url)
+            else:
+                print('Something wrong with form.')
+                print(form.errors)
+                form1 = SectionForm()
+                messages.error(request, 'Error: Your changes are not valid!')
+                # messages.error(request, )
+                return redirect("/section")
+                # return render(request, 'pages/backend/section.html', {'form': form})
+
+        elif request.POST.get("action_status") == 'CREATE':
+            form = SectionForm(request.POST)
+            print(request.POST)
+
+            if form.is_valid():
+                print('Form is valid')
+                model = form.save()
+                messages.success(request, 'New Section successfully created!')
+                return redirect('/section')
+            else:
+                print('Something wrong with the form')
+                print(form.errors)
+                form = SectionForm()
+                messages.error(request, 'Error: Your entries are not valid!')
+                return redirect("/section")
+                # return render(request, 'pages/backend/section.html', {'form': form})
+
+        elif request.POST.get("action_status") == 'DELETE':
+            this_section = Section.objects.get(id=request.POST.get("section_id"))
+            this_section.delete()
+            messages.success(request, 'The question successfully deleted!')
+            return redirect('/section')
 
     context = {
         'sections': sections,
         'total_sections': total_sections,
         'total_tests': total_tests,
-        'forms_list': forms_list,
+        'sections_instance_list': sections_instance_list,
         'form': form
     }
     return render(request, 'pages/backend/section.html', context)
+
+
+
     # this_section = Question.objects.get(id=pk)
     # form = QuestionForm(instance=this_section)
 
@@ -742,8 +760,8 @@ def section(request):
     # return render(request, 'pages/backend/create_update_form.html', {'form': form})
 
     # context = {
-        # 'this_question': this_question,
-        # 'form': form,
+    # 'this_question': this_question,
+    # 'form': form,
     # }
     # return render(request, 'pages/backend/create_update_form.html', context)
 

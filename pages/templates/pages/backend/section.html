@@ -7,16 +7,8 @@
 <header class="py-3"><h1 class="text-center text-light">Sections</h1></header>
 
 <div class="container">
-    {% if messages %}
-        {% for message in messages %}
-            <div  {% if message.tags %} class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert" {% endif %}>
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                {{ message }}
-            </div>
-        {% endfor %}
-    {% endif %}
 
-{#<section class="row">#}
+<section class="row">
 {#	<div class="col-sm-6">#}
 {#        <div class="card text-center text-light bg-dark mb-3">#}
 {#            <div class="card-header">#}
@@ -44,37 +36,64 @@
 {#            </div>#}
 {#        </div>#}
 {#    </div>#}
-{#</section>#}
+</section>
 
-<section class="table-responsive-md">
+{% if total_sections != 0 %}
+    <section class="table-responsive-md">
         <table class="table table-hover table-dark">
             <tr>
-                <th class="text-center">Sequence</th>
+                <th class="text-center">#</th>
                 <th class="text-center">Section</th>
                 <th class="text-center">Answer Category</th>
                 <th></th>
             </tr>
 
-            {% for i in sections %}
-                {% for z in forms_list %}
+            {% for i, z in sections_instance_list %}
                 <tr>
                     <form method="POST" enctype="multipart/form-data">
                     {% csrf_token %}
 {#                    {{ form.media }}#}
-                        <td class="text-center">{{ i.id }}</td>
-                        <td class="text-center">{{z.section}}</td>
-                        <td class="text-center">{{z.answer_category}}</td>
+                        <td class="text-center">-</td>
+                            <td class="text-center">{{z.section}}</td>
+                            <td class="text-center">{{z.answer_category}}</td>
+
                         <td>
                             <input class="btn btn-sm btn-info" type="submit" value="Update" />
-                            <a class="btn btn-sm btn-danger" href="{% url 'backend-delete' i.id %}">Delete</a>
+                            <button type="button" class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#modal-delete{{ i.id }}">Delete</button>
                         </td>
-                         <input type="hidden" name="section_id" value="{{ i.id }}">
+                        <input type="hidden" name="section_id" value="{{ i.id }}">
+                        <input type="hidden" name="action_status" value="UPDATE">
                     </form>
                 </tr>
-                {% endfor %}
+
+                <!-- Modal -->
+                    <div class="modal fade" id="modal-delete{{ i.id }}" tabindex="-1" aria-labelledby="modal-deleteLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="exampleModalLabel">Delete</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    Are you sure you want to delete Section {{z.section.value }}?
+                                </div>
+                                <div class="modal-footer">
+                                    <form method="POST" enctype="multipart/form-data">
+                                        {% csrf_token %}
+{#                                      {{ form.media }}#}
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                        <input type="submit" class="btn btn-danger" value="Delete" />
+                                        <input type="hidden" name="section_id" value="{{ i.id }}">
+                                        <input type="hidden" name="action_status" value="DELETE">
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
             {% endfor %}
         </table>
-</section>
+    </section>
+{% endif %}
 
 <section class="table-responsive-md py-3">
     <h2 class="text-light">Add new Section</h2>
@@ -93,7 +112,7 @@
                         <td class="text-center">{{form.section}}</td>
                         <td class="text-center">{{form.answer_category}}</td>
                         <td><input class="btn btn-sm btn-success" type="submit" value="Create" /></td>
-{#                        <input type="hidden" name="section_id" value="{{ i.id }}">#}
+                        <input type="hidden" name="action_status" value="CREATE">
                 </form>
             </tr>
         </table>
