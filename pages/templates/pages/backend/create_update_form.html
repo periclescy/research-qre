@@ -7,7 +7,7 @@
 
 {% if this_question  %}
 
-<header class="my-2 py-0"><h1 class="text-center text-light">Update</h1></header>
+<header class="my-2 py-0"><h1 class="text-center">Update</h1></header>
 
 <div class="container text-light">
     <div class="row">
@@ -16,15 +16,10 @@
                     {% csrf_token %}
                     {{ form.media }}
                     <div class="row my-3">
-                        <div class="col-6">
+                        <div class="col-2">
                             {{ form.section |as_crispy_field }}
                         </div>
-                        <div class="col-6">
-                            {{ form.answer_category |as_crispy_field }}
-                        </div>
-                    </div>
-                    <div class="row my-3">
-                        <div class="col-lg-12">
+                        <div class="col-10">
                             {{ form.question |as_crispy_field }}
                         </div>
                     </div>
@@ -40,31 +35,17 @@
 
 {% else %}
 
-    <header class="my-2 mx-auto py-0"><h1 class="text-center text-light">Create New Question</h1></header>
-
-    {% if messages %}
-        {% for message in messages %}
-            <div  {% if message.tags %} class="alert alert-{{ message.tags }} alert-dismissible fade show" {% endif %}>
-                <button type="button" class="close" data-dismiss="alert">&times;</button>
-                {{ message }}
-            </div>
-        {% endfor %}
-    {% endif %}
+    <header class="my-2 mx-auto py-3"><h1 class="text-center">Create New Question</h1></header>
 
     <div class="row">
-        <div class="col mx-auto card col-lg-10 offset-lg-1">
-            <div class=" text-center card-body">
+            <div class="col">
                 <form method="POST" enctype="multipart/form-data">
                     {% csrf_token %}
-{#                    {{ form.media }}#}
+                    {{ form.media }}
                         <div class="row">
                             <div class="col-lg-5 offset-lg-1">{{ form.section | as_crispy_field  }}</div>
-                            <div class="col-lg-5">{{ form.answer_category | as_crispy_field }}</div>
+                            <div class="col-lg-5">{{ form.question | as_crispy_field }}</div>
                         </div>
-
-                        <div class="row">
-                             <div class="col-lg-8 offset-lg-2">{{ form.question | as_crispy_field }}</div>
-
 
                     <div class="row">
                         <div class="col"><a class="btn btn-outline-secondary" href="{% url 'backend-dashboard'%}">Cancel</a></div>
@@ -74,7 +55,6 @@
 
                 </form>
             </div>
-        </div>
     </div>
 
 

@@ -1,4 +1,5 @@
 import datetime
+import time
 import json
 
 from django.contrib import messages
@@ -52,42 +53,11 @@ def logout_page(request):
 def start(request):
     print('----------- WELCOME -----------')  # Welcome message
 
-    # --- Check the language from url  --- #
-    # choices = {'el': ('flag_el.png', 'logo_el.png', 'caption_pri_el', 'caption_sec_el', 'description_el', 'headline_el',
-    #                   'instructions_el', 'footer_el'),
-    #            'en': ('flag_en.png', 'logo.png', 'caption_pri_en', 'caption_sec_en', 'description_en', 'headline_en',
-    #                   'instructions_en', 'footer_en')}
-    # (flag, logo, caption_pri, caption_sec, description, headline, instructions, footer) = \
-    #     choices.get(lang, (
-    #         'flag_el.png', 'logo_el.png', 'caption_pri_el', 'caption_sec_el', 'description_el', 'headline_el',
-    #         'instructions_el', 'footer_el'))
-    # print('Language: is set to ', lang)  # For debugging purposes
-
     # --- Fetch headline, instructions & footer from Database Options  --- #
     headline = Option.objects.get(id=1).headline
     instructions = Option.objects.get(id=1).instructions
     footer = Option.objects.get(id=1).footer
     logo = 'logo.png'
-
-    # --- Query to get all Pairs --- #
-    # pairs = Pair.objects.values_list('id', flat=True)  # Get all Pairs id's as a list
-    # print('All possible pairs are: ', pairs)  # For debugging purposes
-
-    # --- Get countdown time that is set from Database Options  --- #
-    # countdown_per_pic = Option.objects.get(id=1).countdown_per_pic
-
-    # --- Get n pairs randomly --- #
-    # n = Option.objects.get(id=1).sample_count  # Get value from Database (Option)
-    # if n <= len(pairs):
-    #     pairs_remaining = random.sample(list(pairs), n)
-    #     print("Random sample", n, "out of ", len(pairs), "pairs of pictures")
-    # else:
-    #     pairs_remaining = random.sample(list(pairs), len(pairs))
-    #     print("Not enough pictures for", n, "samples. Test will proceed with the maximum",
-    #           len(pairs), "pairs of pictures")
-    #
-    # print('Available pairs: ', pairs_remaining)  # For debugging purposes
-    # pairs_done = []  # Create an empty pictures done list
 
     # --- Get correct session from Database --- #
     max_session = Data.objects.aggregate(Max('session'))  # Query that gets maximum value of all sessions
@@ -98,26 +68,25 @@ def start(request):
     session_id = last_session + 1  # Next session value
     print('Session is: ', session_id)  # For debugging purposes
 
-    # --- Create Session variables with new values --- #
-    request.session['session_id'] = session_id
+    # Prepare Sections List
+    section_list = Section.objects.values_list('section', flat=True)
 
-    # request.session['flag'] = flag
+    # Prepare Sections & Questions
+    questions_dict = {}
+    for i in section_list:
+        this_section = list(Question.objects.filter(section__section=i).values_list('id', flat=True))
+        questions_dict[i] = this_section
+    print('Sections with their Questions: ', questions_dict)  # For debugging purposes
+
+    # --- Create Session variables with new values --- #
     request.session['logo'] = logo
     request.session['footer'] = footer
-
-    # request.session['countdown_per_pic'] = countdown_per_pic
-    # request.session['pairs_remaining'] = pairs_remaining
-    # request.session['pairs_done'] = pairs_done
-    # request.session['count_starting_pairs'] = len(pairs_remaining)
-    #
-    # request.session['caption_pri'] = caption_pri
-    # request.session['caption_sec'] = caption_sec
-    # request.session['description'] = description
+    request.session['session_id'] = session_id
+    request.session['questions_dict'] = questions_dict
 
     form = UserForm()
 
     context = {
-        # 'flag': flag,
         'logo': logo,
         'headline': headline,
         'instructions': instructions,
@@ -140,189 +109,81 @@ def home(request):
 
         # --- Retrieve variables from Session --- #
         session_id = request.session.get('session_id')
-        countdown_per_pic = request.session.get('countdown_per_pic')
-        pairs_remaining = request.session.get('pairs_remaining')
-        pairs_done = request.session.get('pairs_done')
-        count_starting_pairs = request.session.get('count_starting_pairs')
-        random_pick = request.session.get('random_pick')
-        caption_pri = request.session.get('caption_pri')
-        caption_sec = request.session.get('caption_sec')
-        description = request.session.get('description')
+        questions_dict = request.session['questions_dict']
+        print('Session is: ', session_id)  # For debugging purposes
 
-        # --- Avoid test when no pairs are available --- #
-        if count_starting_pairs <= 0:
-            html = "<html><body><h1>Database is empty!!!</h1>Go back to <a href='/dashboard'>Dashboard </a>" \
+        questions = Question.objects.count()
+        # --- Avoid test when no questions are available --- #
+        if questions == 0:
+            html = "<html><body><h1No Questions in Database!!!</h1>Go back to <a href='/dashboard'>Dashboard </a>" \
                    "and add some entries! </body></html> "
             return HttpResponse(html)
 
-        print('Session is: ', session_id)  # For debugging purposes
-        print('Remaining pairs: ', pairs_remaining)  # For debugging purposes
-        print('Pairs done: ', pairs_done)  # For debugging purposes
+        # --- Check if it's the first POST --- #
+        if 'start-post' == request.POST['Post_name']:
+            start_time = int(time.time())
+            session = request.POST['session']
+            team = request.POST['team']
+            gender = request.POST['gender']
+            age = request.POST['age']
+            education = request.POST['education']
+            district = request.POST['district']
+            residence = request.POST['residence']
+
+            # --- Saving User to the Database (Models.User)--- #
+            user = User(session=session, team=team, gender=gender, age=age, education=education,
+                        district=district, residence=residence)
+            user.save()
+            print("User entry saved to the database!")  # For debugging purposes
+
+            # --- Saving Click of START to the Database (Models.Data)--- #
+            sta = Data(session=session_id, status='start', timestamp=start_time, question=None,
+                       selection=None, team=team)
+            sta.save()
+            print("----------- START -----------")  # For debugging purposes
+
+            # --- Calculate variables to send to template --- #
+            if questions_dict:
+                this_key = next(iter(questions_dict.keys()))  # Get the first key in dictionary
+                this_section_values = questions_dict[this_key]
+
+                if this_section_values:
+                    this_question_id = this_section_values[0]  # Get the first item in list
+                    this_section_values.pop(0)  # Remove the above item
+
+                    print(this_section_values)
+                    print(this_question_id)
+                    print(questions_dict)
+
+                    # --- Get values from Database --- #
+                    this_question = Question.objects.get(id=this_question_id)
+                    # x.section.answer_category
+
+                    context = {
+                        # Variables for Template
+                        'this_question': this_question,
+                        'section': this_key,
+                        'team': team
+                        # 'progress_bar': progress_bar,
+                        # 'len_pairs_done': len(pairs_done),
+                        # 'count_starting_pairs': count_starting_pairs,
+                    }
+
+                    return render(request, 'pages/frontend/home.html', context)
 
         if 'commit-target' == request.POST['Post_name']:
             # --- Timestamp for Commit --- #
             commit_time = request.POST['t']  # Get time in Epoch (milliseconds)
 
-            # --- Retrieve current targets from Session --- #
-            pair_obj = Pair.objects.get(id=random_pick)
-            target_obj = pair_obj.pair_target
+            # # Saving Click values to the Database (Models.Data)
+            cli = Data(session=session_id, status='start', timestamp=start_time, question=None,
+                       selection=None, team=team)
+            print("Successfully added to the database!")
 
-            # --- Get filenames of pictures --- #
-            filename_pri = pair_obj.image_pri.name
-            filename_sec = pair_obj.image_sec.name
+            # --- Clear pair in Session --- #
+            del (request.session['random_pick'])
 
-            # # --- Retrieve values from Primary target (px) --- #
-            x_p = float(request.POST['x_p'])
-            y_p = float(request.POST['y_p'])
-            w_p = float(request.POST['w_p'])
-            h_p = float(request.POST['h_p'])
-
-            # --- Convert values to percentages (%) --- #
-            xtl_pri = x_p / pair_obj.width_pri * 100
-            ytl_pri = y_p / pair_obj.height_pri * 100
-            w_pri = w_p / pair_obj.width_pri * 100
-            h_pri = h_p / pair_obj.height_pri * 100
-
-            # --- Calculate to bottom-right end of the selected box (%) --- #
-            xbr_pri = xtl_pri + w_pri
-            ybr_pri = ytl_pri + h_pri
-
-            # --- Convert Database values (x, y, width, height) to percentages (%) --- #
-            x0tl_pri = target_obj.x_pri / pair_obj.width_pri * 100
-            y0tl_pri = target_obj.y_pri / pair_obj.height_pri * 100
-            w0_pri = target_obj.w_pri / pair_obj.width_pri * 100
-            h0_pri = target_obj.h_pri / pair_obj.height_pri * 100
-
-            # --- Calculate to bottom-right end of Database box (%) --- #
-            x0br_pri = x0tl_pri + w0_pri
-            y0br_pri = y0tl_pri + h0_pri
-
-            # --- Calculate the area of Intersection (Overlap) (%) --- #
-            x1 = max(xtl_pri, x0tl_pri)
-            x2 = min(xbr_pri, x0br_pri)
-            y1 = max(ytl_pri, y0tl_pri)
-            y2 = min(ybr_pri, y0br_pri)
-
-            if x1 < x2 and y1 < y2:
-                intersection_pri = (x2 - x1) * (y2 - y1)
-            else:
-                intersection_pri = 0
-
-            # --- Calculate the area of Union (Overlap) (%) --- #
-            union_pri = (w_pri * h_pri) + (w0_pri * h0_pri) - intersection_pri
-
-            print(intersection_pri, union_pri)
-
-            ratio = intersection_pri / union_pri
-            score_pri = ratio * 100
-            score = round(score_pri, 1)
-
-            status: bool
-            if int(round(score)) > 70:
-                status = True
-            elif int(round(score)) == 0:
-                status = False
-            else:
-                status = False
-
-            obj = {
-                'xtl_pri': xtl_pri,
-                'ytl_pri': ytl_pri,
-                'xbr_pri': xbr_pri,
-                'ybr_pri': ybr_pri,
-                'total_score': score,
-                'status': status
-            }
-
-            if target_obj.x_sec and target_obj.y_sec and target_obj.w_sec and target_obj.h_sec:
-                # --- Retrieve values from Secondary target --- #
-                x_s = float(request.POST['x_s'])
-                y_s = float(request.POST['y_s'])
-                w_s = float(request.POST['w_s'])
-                h_s = float(request.POST['h_s'])
-
-                # --- Convert values to percentages (%) --- #
-                xtl_sec = x_s / pair_obj.width_sec * 100
-                ytl_sec = y_s / pair_obj.height_sec * 100
-                w_sec = w_s / pair_obj.width_sec * 100
-                h_sec = h_s / pair_obj.height_sec * 100
-
-                # --- Calculate to bottom-right end of the selected box (%) --- #
-                xbr_sec = xtl_sec + w_sec
-                ybr_sec = ytl_sec + h_sec
-
-                # --- Convert Database values (x, y, width, height) to percentages (%) --- #
-                x0tl_sec = target_obj.x_sec / pair_obj.width_sec * 100
-                y0tl_sec = target_obj.y_sec / pair_obj.height_sec * 100
-                w0_sec = target_obj.w_sec / pair_obj.width_sec * 100
-                h0_sec = target_obj.h_sec / pair_obj.height_sec * 100
-
-                # --- Calculate to bottom-right end of Database box (%) --- #
-                x0br_sec = x0tl_sec + w0_sec
-                y0br_sec = y0tl_sec + h0_sec
-
-                # --- Calculate the area of Intersection (Overlap) (%) --- #
-                x1 = max(xtl_sec, x0tl_sec)
-                x2 = min(xbr_sec, x0br_sec)
-                y1 = max(ytl_sec, y0tl_sec)
-                y2 = min(ybr_sec, y0br_sec)
-
-                if x1 < x2 and y1 < y2:
-                    intersection_sec = (x2 - x1) * (y2 - y1)
-                else:
-                    intersection_sec = 0
-
-                # --- Calculate the area of Union (Overlap) (%) --- #
-                union_sec = (w_sec * h_sec) + (w0_sec * h0_sec) - intersection_sec
-
-                print(intersection_sec, union_sec)
-
-                ratio_sec = intersection_sec / union_sec
-                score_sec = ratio_sec * 100
-
-                score = round((score_pri + score_sec) / 2, 1)
-
-                status: bool
-                if int(round(score)) > 70:
-                    status = True
-                elif int(round(score)) == 0:
-                    status = False
-                else:
-                    status = False
-
-                obj.update({
-                    'xtl_sec': xtl_sec,
-                    'ytl_sec': ytl_sec,
-                    'xbr_sec': xbr_sec,
-                    'ybr_sec': ybr_sec,
-                    'total_score': score,
-                    'status': status
-                })
-
-                # For debugging purposes
-                print('Score:', score)
-
-                status: bool
-                if int(round(score)) > 70:
-                    status = True
-                elif int(round(score)) == 0:
-                    status = False
-                else:
-                    status = False
-
-                # # Saving Click values to the Database (Models.Data)
-                cli = Data(session=session_id, timestamp=commit_time, status=status, score=score,
-                           pair_id=random_pick, filename_pri=filename_pri, filename_sec=filename_sec,
-                           xtl_pri=xtl_pri, ytl_pri=ytl_pri, xbr_pri=xbr_pri, ybr_pri=ybr_pri,
-                           xtl_sec=xtl_sec, ytl_sec=ytl_sec, xbr_sec=xbr_sec, ybr_sec=ybr_sec,
-                           countdown_per_pic=countdown_per_pic)
-                cli.save()
-                print("Successfully added to the database!")
-
-                # --- Clear pair in Session --- #
-                del (request.session['random_pick'])
-
-                return JsonResponse(obj, safe=True)
+            return JsonResponse(obj, safe=True)
 
             # For debugging purposes
             print('Score:', score)
@@ -512,15 +373,16 @@ def home(request):
             if len(pairs_done) == 1:
                 session_p = request.POST['session']
                 start_time = next_time
-                gender_p = request.POST['gender']
-                age_p = request.POST['age']
-                education_p = request.POST['education']
-                sector_p = request.POST['sector']
-                knowledge_p = request.POST['knowledge']
+                team = request.POST['team']
+                gender = request.POST['gender']
+                age = request.POST['age']
+                education = request.POST['education']
+                district = request.POST['district']
+                residence = request.POST['residence']
 
                 # --- Saving User to the Database (Models.User)--- #
-                user = User(session=session_p, gender=gender_p, age=age_p, education=education_p,
-                            sector=sector_p, knowledge=knowledge_p)
+                user = User(session=session_p, team=team, gender=gender, age=age, education=education,
+                            district=district, residence=residence)
                 user.save()
                 print("User entry saved to the database!")  # For debugging purposes
 
@@ -609,67 +471,6 @@ def dashboard(request):
 
 
 @login_required
-def details(request, pk):
-    questions = Question.objects.all()
-    this_question = questions.get(id=pk)
-
-    user = get_user(request)
-    if user.username == 'user':
-        return redirect('/')
-
-    form = QuestionForm(instance=this_question)
-
-    context = {
-        'this_question': this_question,
-        'form': form,
-    }
-    return render(request, 'pages/backend/details.html', context)
-
-
-@login_required
-def preview(request, pk):
-    questions = Question.objects.all()
-    this_question = questions.get(id=pk)
-
-    user = get_user(request)
-    if user.username == 'user':
-        return redirect('/')
-
-    context = {
-        'this_question': this_question,
-    }
-    return render(request, 'pages/backend/preview.html', context)
-
-
-@login_required
-def create(request):
-    user = get_user(request)
-    if user.username == 'user':
-        return redirect('/')
-
-    form = QuestionForm()
-    if request.method == 'POST':
-        form = QuestionForm(request.POST)
-        print(request.POST)
-
-        if form.is_valid():
-            print('All forms are valid')
-            model1 = form.save()
-            messages.success(request, 'New Question successfully created!')
-            return redirect('/dashboard')
-        else:
-            print('Something wrong with forms')
-            form = QuestionForm()
-            messages.error(request, 'Error: Your entries are not valid!')
-            return render(request, 'pages/backend/create_update_form.html', {'form1': form})
-
-    context = {
-        'form': form
-    }
-    return render(request, 'pages/backend/create_update_form.html', context)
-
-
-@login_required
 def section(request):
     user = get_user(request)
     if user.username == 'user':
@@ -740,30 +541,65 @@ def section(request):
     return render(request, 'pages/backend/section.html', context)
 
 
+@login_required
+def details(request, pk):
+    questions = Question.objects.all()
+    this_question = questions.get(id=pk)
 
-    # this_section = Question.objects.get(id=pk)
-    # form = QuestionForm(instance=this_section)
+    user = get_user(request)
+    if user.username == 'user':
+        return redirect('/')
 
-    # if request.method == 'POST':
-    # form = QuestionForm(request.POST, request.FILES, instance=this_question)
+    form = QuestionForm(instance=this_question)
 
-    # if form.is_valid():
-    #     print('All forms are valid')
-    #     model1 = form.save()
-    #     messages.success(request, 'Your changes successfully applied!')
-    # success_url = f"/details/{this_question.id}"
-    #     return redirect(success_url)
-    # else:
-    #     print('Something wrong with forms')
-    #     form1 = QuestionForm()
-    # messages.error(request, 'Error: Your changes are not valid!')
-    # return render(request, 'pages/backend/create_update_form.html', {'form': form})
+    context = {
+        'this_question': this_question,
+        'form': form,
+    }
+    return render(request, 'pages/backend/details.html', context)
 
-    # context = {
-    # 'this_question': this_question,
-    # 'form': form,
-    # }
-    # return render(request, 'pages/backend/create_update_form.html', context)
+
+@login_required
+def preview(request, pk):
+    questions = Question.objects.all()
+    this_question = questions.get(id=pk)
+
+    user = get_user(request)
+    if user.username == 'user':
+        return redirect('/')
+
+    context = {
+        'this_question': this_question,
+    }
+    return render(request, 'pages/backend/preview.html', context)
+
+
+@login_required
+def create(request):
+    user = get_user(request)
+    if user.username == 'user':
+        return redirect('/')
+
+    form = QuestionForm()
+    if request.method == 'POST':
+        form = QuestionForm(request.POST)
+        print(request.POST)
+
+        if form.is_valid():
+            print('All forms are valid')
+            model1 = form.save()
+            messages.success(request, 'New Question successfully created!')
+            return redirect('/dashboard')
+        else:
+            print('Something wrong with forms')
+            form = QuestionForm()
+            messages.error(request, 'Error: Your entries are not valid!')
+            return render(request, 'pages/backend/create_update_form.html', {'form1': form})
+
+    context = {
+        'form': form
+    }
+    return render(request, 'pages/backend/create_update_form.html', context)
 
 
 @login_required

@@ -4,43 +4,11 @@
 
 {% block content %}
 
-<header class="py-3"><h1 class="text-center text-light">Sections</h1></header>
-
-<div class="container">
-
-<section class="row">
-{#	<div class="col-sm-6">#}
-{#        <div class="card text-center text-light bg-dark mb-3">#}
-{#            <div class="card-header">#}
-{#                <h5 class="card-title">Total Questions</h5>#}
-{#            </div>#}
-{#            <div class="card-body">#}
-{#                <h3 class="card-title">{{ total_sections }}</h3>#}
-{#            </div>#}
-{#            <div class="card-footer">#}
-{#                <a class="btn btn-success btn-sm btn-block" href="{% url 'backend-create'%}">New Question</a>#}
-{#            </div>#}
-{#        </div>#}
-{#    </div>#}
-{##}
-{#	<div class="col-sm-6">#}
-{#        <div class="card text-center text-light bg-dark mb-3">#}
-{#            <div class="card-header">#}
-{#                <h5 class="card-title">Total Tests Completed</h5>#}
-{#            </div>#}
-{#            <div class="card-body">#}
-{#                <h3 class="card-title">{{ total_tests }}</h3>#}
-{#            </div>#}
-{#            <div class="card-footer">#}
-{#                <a class="btn btn-warning btn-sm btn-block" href="{% url 'backend-rankings'%}">Rankings</a>#}
-{#            </div>#}
-{#        </div>#}
-{#    </div>#}
-</section>
+<header class="py-3"><h1 class="text-center">Sections</h1></header>
 
 {% if total_sections != 0 %}
-    <section class="table-responsive-md">
-        <table class="table table-hover table-dark">
+    <div class="table-responsive-md">
+        <table class="table table-hover">
             <tr>
                 <th class="text-center">#</th>
                 <th class="text-center">Section</th>
@@ -92,12 +60,12 @@
                     </div>
             {% endfor %}
         </table>
-    </section>
+    </div>
 {% endif %}
 
-<section class="table-responsive-md py-3">
-    <h2 class="text-light">Add new Section</h2>
-        <table class="table table-hover table-dark">
+<div class="table-responsive-md py-3">
+    <h2 class="">Add new Section</h2>
+        <table class="table table-hover">
             <tr>
                 <th class="text-center"></th>
                 <th class="text-center">Section</th>
@@ -116,7 +84,7 @@
                 </form>
             </tr>
         </table>
-</section>
-
 </div>
+
+
 {% endblock %}

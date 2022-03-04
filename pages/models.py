@@ -3,6 +3,11 @@ from ckeditor.fields import RichTextField
 
 
 # *** *** Choices Classes *** *** #
+class Team(models.TextChoices):
+    null = '', "--"
+    male = 'A', "Ομάδα Α / Team A"
+    female = 'B', "Ομάδα B / Team B"
+
 
 class Gender(models.TextChoices):
     null = '', "--"
@@ -32,7 +37,7 @@ class Education(models.TextChoices):
 
 class District(models.TextChoices):
     null = '', "--"
-    lemesos = "lemesos", "Λεμεσός/ Λεμεσός"
+    lemesos = "lemesos", "Λεμεσός / Lemesos"
     nicosia = "nicosia", "Λευκωσία / Nicosia"
     larnaca = "larnaca", "Λάρνακα / Larnaca"
     paphos = "paphos", "Πάφος / Paphos"
@@ -81,6 +86,7 @@ class Option(models.Model):
 # ------------- USER ------------- #
 class User(models.Model):
     session = models.IntegerField()
+    team = models.CharField(max_length=1, choices=Team.choices, default=Team.null)
     gender = models.CharField(max_length=1, choices=Gender.choices, default=Gender.null)
     age = models.CharField(max_length=5, choices=Age.choices, default=Age.null)
     education = models.CharField(max_length=10, choices=Education.choices, default=Education.null)
@@ -93,6 +99,9 @@ class Section(models.Model):
     section = models.CharField(max_length=1, choices=SectionCategory.choices, default=SectionCategory.null, unique=True)
     answer_category = models.CharField(max_length=8, choices=AnswerCategory.choices, default=AnswerCategory.null)
 
+    def __str__(self):
+        return str(self.section)
+
 
 # ------------- QUESTION ------------- #
 class Question(models.Model):
@@ -104,8 +113,10 @@ class Question(models.Model):
 class Data(models.Model):
     session = models.IntegerField()
     timestamp = models.CharField(max_length=50)
-    status = models.CharField(max_length=10, blank=True, null=True)
-    answer = models.CharField(max_length=1)
+    status = models.CharField(max_length=10, null=True)
+    question = RichTextField(max_length=1500, null=True)
+    selection = models.IntegerField(null=True)
+    team = models.CharField(max_length=30, null=True)
 
     class Meta:
         verbose_name_plural = "Data"

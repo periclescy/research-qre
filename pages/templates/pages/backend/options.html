@@ -3,11 +3,10 @@
 {% load static %}
 {% block content %}
 
-    <header class="my-2 mx-auto py-0"><h1 class="display-5 text-center text-light">Options</h1></header>
+    <header class="my-2 mx-auto py-0"><h1 class="display-5 text-center">Options</h1></header>
 
     <div class="row">
-        <div class="col-md-10 offset-md-1 mx-auto">
-            <div class="card bg-dark text-light">
+            <div class="card">
                 <div class=" text-center card-body">
                     <form action="" method="POST">
                         {% csrf_token %}
@@ -30,10 +29,10 @@
                         <input class="btn btn-success" type="submit" value="Submit" />
                     </form>
                 </div>
-            </div>
         </div>
 
 
     </div>
+
 
 {% endblock %}

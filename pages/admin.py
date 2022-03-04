@@ -24,7 +24,7 @@ admin.site.register(MyOption, MyOptionIEAdmin)
 
 # ------------- USER ------------- #
 class PostUser(admin.ModelAdmin):
-    list_display = ('id', 'session', 'gender', 'age', 'education', 'district', 'residence')
+    list_display = ('id', 'team', 'session', 'gender', 'age', 'education', 'district', 'residence')
 
 
 class MyUser(User):
@@ -81,7 +81,7 @@ admin.site.register(MyQuestion, MyQuestionIEAdmin)
 
 # ------------- DATA ------------- #
 class PostData(admin.ModelAdmin):
-    list_display = ('id', 'session', 'timestamp', 'status', 'answer')
+    list_display = ('id', 'session', 'timestamp',  'status', 'question', 'selection', 'team')
 
 
 class MyData(Data):

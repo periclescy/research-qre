@@ -17,6 +17,7 @@ class OptionForm(ModelForm):
 
 class UserForm(ModelForm):
     # session = forms.CharField()
+    team = forms.ChoiceField(choices=Team.choices, required=True, label='Ομάδα / Team')
     gender = forms.ChoiceField(choices=Gender.choices, required=True, label='Φύλο / Gender')
     age = forms.ChoiceField(choices=Age.choices, required=True, label='Ηλικία / Age')
     education = forms.ChoiceField(choices=Education.choices, required=True, label='Επίπεδο Μόρφωσης / Education Level')

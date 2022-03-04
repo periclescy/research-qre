@@ -2,13 +2,11 @@
 
 {% block content %}
 
-<header class="py-3"><h1 class="text-center text-light">Dashboard</h1></header>
-
-<div class="container">
+<header class="py-3"><h1 class="text-center">Dashboard</h1></header>
 
 <section class="row">
 	<div class="col-sm-6">
-        <div class="card text-center text-light bg-dark mb-3">
+        <div class="card text-center mb-3">
             <div class="card-header">
                 <h5 class="card-title">Total Questions</h5>
             </div>
@@ -22,7 +20,7 @@
     </div>
 
 	<div class="col-sm-6">
-        <div class="card text-center text-light bg-dark mb-3">
+        <div class="card text-center mb-3">
             <div class="card-header">
                 <h5 class="card-title">Total Tests Completed</h5>
             </div>
@@ -37,12 +35,11 @@
 </section>
 
 <section class="table-responsive-md">
-        <table class="table table-hover table-dark">
+        <table class="table table-hover">
             <tr>
                 <th class="text-center">Sequence</th>
                 <th class="text-center">Section</th>
-                <th class="d-none d-md-table-cell">Answer Category</th>
-                <th class="text-center">Question</th>
+                <th class="text-left">Question</th>
                 <th></th>
             </tr>
 
@@ -50,8 +47,7 @@
                 <tr>
                     <td class="text-center">{{ i.id }}</td>
                     <td class="text-center">{{i.section}}</td>
-                    <td class="text-center">{{i.answer_category}}</td>
-                    <td class="text-center">{{i.question|safe}}</td>
+                    <td class="text-left">{{i.question|safe}}</td>
                     <td>
                         <a class="btn btn-sm btn-primary my-1 w-100" href="{% url 'backend-details' i.id %}">Details</a><br/>
                         <a class="btn btn-sm btn-info my-1 w-100" href="{% url 'backend-update' i.id %}">Update</a><br/>
@@ -63,5 +59,4 @@
 
 </section>
 
-</div>
 {% endblock %}
