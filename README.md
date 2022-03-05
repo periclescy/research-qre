@@ -5,7 +5,7 @@ Research QRE is a tool for preparing and collecting data for research questionna
 - Python 3.9
 
 ### Frameworks:
-- Django
+- Django 3.2
 
 
 ---
