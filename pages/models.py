@@ -66,11 +66,7 @@ class AnswerCategory(models.TextChoices):
     boolean = "boolean", "True / False"
     likert6 = "likert6", "6 point Likert"
     likert7 = "likert7", "7 point Likert"
-    brake1 = "brake1", "1 min brake"
-    brake2 = "brake2", "2 min brake"
-    brake5 = "brake5", "5 min brake"
-    brake10 = "brake10", "10 min brake"
-    brake15 = "brake15", "15 min brake"
+    brake = "brake", "brake"
 
 
 # *** *** End of Choices Classes *** *** #

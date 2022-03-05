@@ -15,19 +15,41 @@
             <p class="card-text">{{ this_question.question|safe }}</p>
 
         </div>
-        <div class="card-footer text-muted">
+        <div class="card-footer">
+            <h6 class="card-title p-2">Επιλογές</h6>
             <div class="row">
             {% if this_question.section.answer_category == "boolean" %}
             {% for i in 3|times %}
                 <div class="col text-center">
                     <form method="POST" id="next-form">
                         {% csrf_token %}
-                        <input type="hidden" id="{{ i }}" name="answer" value="{{ i }}" />
-                        <input type="hidden" name="Post_name" value="next-image" />
-                        <button class="btn btn-primary btn-lg w-100" type="submit" id="next_button"> {{ i }} </button>
+                        <input type="hidden" name="selection" id="{{ i }}" value="{{ i }}" />
+                        <input type="hidden" name="Post_name" value="next" />
+                        <button class="btn btn-primary btn-lg w-100" type="submit"> {{ i }} </button>
                     </form>
                 </div>
-
+            {% endfor %}
+            {% elif this_question.section.answer_category == "likert6" %}
+            {% for i in 7|times %}
+                <div class="col text-center">
+                    <form method="POST" id="next-form">
+                        {% csrf_token %}
+                        <input type="hidden" name="selection" id="{{ i }}" value="{{ i }}" />
+                        <input type="hidden" name="Post_name" value="next" />
+                        <button class="btn btn-primary btn-lg w-100" type="submit"> {{ i }} </button>
+                    </form>
+                </div>
+            {% endfor %}
+            {% elif this_question.section.answer_category == "likert7" %}
+            {% for i in 8|times %}
+                <div class="col text-center">
+                    <form method="POST" id="next-form">
+                        {% csrf_token %}
+                        <input type="hidden" name="selection" id="{{ i }}" value="{{ i }}" />
+                        <input type="hidden" name="Post_name" value="next" />
+                        <button class="btn btn-primary btn-lg w-100" type="submit"> {{ i }} </button>
+                    </form>
+                </div>
             {% endfor %}
             {% endif %}
             </div>
