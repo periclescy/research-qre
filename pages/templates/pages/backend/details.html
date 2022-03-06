@@ -2,39 +2,37 @@
 
 {% block content %}
 
-<h1 class="py-3 text-center">Question Details</h1>
+<h1 class="py-3 text-center">Details</h1>
 
-    <div class="card my-3">
-        <div class="row g-0">
-            <div class="col-md-4">
-                <div class="card-body">
-                    <h5 class="card-title">Section</h5>
-                    <p class="card-text">{{this_question.section}}</p>
-                    <h5 class="card-title">Answer Category</h5>
-                    <p class="card-text">{{this_question.section.answer_category}}</p>
-                </div>
-            </div>
-            <div class="col-md-8">
-                <div class="card-body">
-                    <h5 class="card-title">Question</h5>
-                    <p class="card-text">{{this_question.question|safe}}</p>
-                </div>
-            </div>
+    <div class="row">
+        <div class="col offset-2">
+            <h5>Section</h5>
+            <p>{{this_question.section}}</p>
+        </div>
+        <div class="col">
+            <h5>Answer Category</h5>
+            <p>{{this_question.section.answer_category}}</p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col offset-2">
+            <h5>Question</h5>
+            <p>{{this_question.question|safe}}</p>
         </div>
     </div>
 
-    <div class="row text-center">
-        <div class="col-3">
+    <div class="row">
+        <div class="col-md-2 offset-md-2 py-1">
             <a class="btn btn-success btn-md w-100" href="{% url 'backend-preview' this_question.id %}">Preview</a>
         </div>
-        <div class="col-3">
+        <div class="col-md-2 py-1">
             <a class="btn btn-info btn-md w-100" href="{% url 'backend-update' this_question.id %}">Update</a>
         </div>
-        <div class="col-3">
+        <div class="col-md-2 py-1">
             <a class="btn btn-danger btn-md w-100" href="{% url 'backend-delete' this_question.id %}">Delete</a>
         </div>
-        <div class="col-3">
-            <a class="btn btn-warning btn-md w-100" href="{% url 'backend-rankings' %}">Rankings</a>
+        <div class="col-md-2 py-1">
+            <a class="btn btn-warning btn-md w-100" href="">Rankings</a>
         </div>
     </div>
 

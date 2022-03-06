@@ -11,7 +11,11 @@
                     <form action="" method="POST">
                         {% csrf_token %}
                         {{ form.media }}
-
+                        <div class="row p-2">
+                            <div class="col-md-8 offset-md-2">
+                                {{ form.brake_time|as_crispy_field}}
+                            </div>
+                        </div>
                         <div class="row p-2">
                             <div class="col-md-4 offset-md-2">
                                 {{ form.headline|as_crispy_field }}
@@ -25,7 +29,7 @@
                                 {{ form.instructions|as_crispy_field}}
                             </div>
                         </div>
-                        <a class="btn btn-outline-secondary" href="{% url 'backend-dashboard' %}" >Cancel</a>
+                        <a class="btn btn-outline-secondary" href="{% url 'frontend-start' %}">Cancel</a>
                         <input class="btn btn-success" type="submit" value="Submit" />
                     </form>
                 </div>

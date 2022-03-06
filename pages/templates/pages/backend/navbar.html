@@ -10,10 +10,13 @@
         <div class="collapse navbar-collapse" id="navbarToggle">
             <ul class="navbar-nav me-auto">
                 <li class="nav-item">
+                    <a class="nav-link {% if "admin" in request.path %} text-light {% endif %}" href="/admin">Admin</a>
+                </li>
+                <li class="nav-item">
                     <a class="nav-link {% if "section" in request.path %} text-light {% endif %}" href="{% url 'backend-section' %}">Sections</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link {% if "dashboard" in request.path %}text-light{% endif %}" href="{% url 'backend-dashboard' %}">Dashboard</a>
+                    <a class="nav-link {% if "question" in request.path %}text-light{% endif %}" href="{% url 'backend-question' %}">Questions</a>
                 </li>
 
                 <li class="nav-item">

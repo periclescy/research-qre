@@ -4,17 +4,17 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.contrib.auth import views as auth_views
+from django.contrib import admin
 
 urlpatterns = [
                   path("", auth_views.LoginView.as_view(template_name="registration/login.html"),
                        name='registration-login'),
-                  path("logout/", auth_views.LogoutView.as_view(), name='registration-logout'),
-                  # path('<str:lang>/', views.start, name='frontend-start-lang'),
+                  path('logout/', auth_views.LogoutView.as_view(), name='registration-logout'),
                   path('start', views.start, name='frontend-start'),
                   path('home', views.home, name='frontend-home'),
-                  path('brake', views.brake, name='frontend-brake'),
+                  # path('brake', views.brake, name='frontend-brake'),
                   path('section', views.section, name='backend-section'),
-                  path('dashboard', views.dashboard, name='backend-dashboard'),
+                  path('question', views.question, name='backend-question'),
                   path('details/<str:pk>/', views.details, name='backend-details'),
                   # path('rankings', views.rankings, name='backend-rankings'),
                   path('create', views.create, name='backend-create'),

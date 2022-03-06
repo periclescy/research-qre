@@ -6,6 +6,7 @@ from .models import *
 
 
 class OptionForm(ModelForm):
+    brake_time = forms.IntegerField(required=True)
     headline = forms.CharField(required=True, label='Start page title')
     footer = forms.CharField(required=True, label='Footer section')
     instructions = forms.CharField(label='Instructions', widget=CKEditorWidget(config_name='instruction'))

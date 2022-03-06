@@ -5,19 +5,29 @@
 {% block content %}
 
 <div class="container">
-    <h1 class="p-3">Ομάδα {{ team }}</h1>
+    <h1 class="p-3">Μέρος {{ section }} - Ομάδα {{ team }}</h1>
     <div class="card text-center">
         <div class="card-header">
-            <h2>Μέρος {{ section }}</h2>
+            {% if this_question.section.answer_category == "brake" %}<div id="countdown" class="display-2"></div>{% endif %}
         </div>
         <div class="card-body">
-            <h5 class="card-title"></h5>
-            <p class="card-text">{{ this_question.question|safe }}</p>
-
+            {% if this_question.section.answer_category == "brake" %}
+                 <img src="media/coffee-brake.jpg" class="img-fluid" alt="brake image">
+             {% else %}
+                <h5 class="card-title"></h5>
+                <p class="card-text">{{ this_question.question|safe }}</p>
+            {% endif %}
         </div>
         <div class="card-footer">
-            <h6 class="card-title p-2">Επιλογές</h6>
-            <div class="row">
+            {% if this_question.section.answer_category == "brake" %}
+                <form method="POST" action="{% url 'frontend-home' %}" id="next-form" name="next-form">
+                    {% csrf_token %}
+                    <input type="hidden" name="selection" id="selection" value="0" />
+                    <input type="hidden" name="Post_name" value="next" />
+                    <input type="submit" class="d-none btn" value="submit" />
+                </form>
+            {% endif %}
+            <div class="row p-3">
             {% if this_question.section.answer_category == "boolean" %}
             {% for i in 3|times %}
                 <div class="col text-center">
@@ -57,15 +67,56 @@
     </div>
 </div>
 
-<script>
-    {#let filename_pri = "{{ filename_pri }}";#}
-    {#let filename_sec = "{{ filename_sec }}";#}
-    {#let countdown_per_pic = {{ countdown_per_pic }};#}
-    {#let spot_pri = {{ spot_pri|safe }};#}
-    {#let spot_sec = {{ spot_sec|safe }};#}
-</script>
+    {% if this_question.section.answer_category == "brake" %}
+        <script>
+            let brake_time = {{ brake_time }}
+
+            window.onload = function() {
+                // Get today's date and time
+                let now = new Date().getTime();
+
+                // Set the date we're counting down to
+                let countDownMinutes = now + (brake_time * 60 * 1000)
+
+                // Update the count down
+                let x = setInterval(function() {
+                    // Get today's date and time
+                    let now = new Date().getTime();
+                    // Find the distance between now and the countdown date
+                    let distance = countDownMinutes - now;
+
+                    // Time calculations for days, hours, minutes and seconds
+                    let hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                    let minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                    let seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+                    // Display the result in the element
+
+                    let element = document.getElementById("countdown");
+                    element.innerHTML = hours + "h " + minutes + "m " + seconds + "s ";
+
+                    let warning_sec = 120 * 1000;
+                    let danger_sec = 30 * 1000;
+
+                    if (distance < warning_sec && distance >= danger_sec) {
+                        element.classList.add("bg-warning");
+                    }
+                    if (distance < danger_sec && distance > 0) {
+                        element.classList.remove("bg-warning");
+                        element.classList.add("bg-danger");
+
+                    }
+                    if (distance <= 0) {
+                        clearInterval(x);
+                        element.innerHTML = "";
+                        document.getElementById("next-form").submit();
+                    }
+                }, 250);
+            }
+        </script>
+    {% endif %}
 
 <!-- Load main.js -->
-<script src="{% static 'pages/js/main.js' %}" ></script>
+<script src="{% static 'pages/js/main.js' %}"></script>
 
 {% endblock %}

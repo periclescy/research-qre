@@ -62,11 +62,15 @@ def start(request):
     # --- Get correct session from Database --- #
     max_session = Data.objects.aggregate(Max('session'))  # Query that gets maximum value of all sessions
     last_session = max_session['session__max']  # Clear the value to be an integer
+
     # Avoid error if database is empty
     if last_session is None:
         last_session = 0
     session_id = last_session + 1  # Next session value
     print('Session is: ', session_id)  # For debugging purposes
+
+    # Get brake time from Database
+    brake_time = Option.objects.get(id=1).brake_time
 
     # Prepare Sections List
     section_list = Section.objects.values_list('section', flat=True)
@@ -78,7 +82,18 @@ def start(request):
         questions_dict[i] = this_section
     print('Sections with their Questions: ', questions_dict)  # For debugging purposes
 
+    # --- Check if there are any empty Sections and set session flag. --- #
+    for key in questions_dict:
+        x = questions_dict[key]
+        if x:
+            request.session.pop('is_section_empty', None)
+        else:
+            request.session['is_section_empty'] = 'EMPTY-SECTION'
+            print('At least one Section are empty!')
+            break
+
     # --- Create Session variables with new values --- #
+    request.session['brake_time'] = brake_time
     request.session['logo'] = logo
     request.session['footer'] = footer
     request.session['session_id'] = session_id
@@ -105,22 +120,30 @@ def home(request):
     if user.username == 'curator':
         return redirect('/')
 
-    if request.method == 'POST':
+    # --- Check if there are any empty Sections --- #
+    if request.session.get('is_section_empty'):
+        print('At least one Section is empty.')
+        html = "<html><body><h1>Empty Section!!!</h1> <p>At least one Section is empty, without any questions/brakes.</p> Please go <a href='/start'>back</a>.</body></html> "
+        return HttpResponse(html)
 
+    if request.method == 'POST':
         # --- Retrieve variables from Session --- #
         session_id = request.session.get('session_id')
+        brake_time = request.session.get('brake_time')
         questions_dict = request.session.get('questions_dict')
+
         print('Session is: ', session_id)  # For debugging purposes
+        print('Brake time is: ', brake_time, 'min.')  # For debugging purposes
         print('questions_dict: ', questions_dict)  # For debugging purposes
 
-        questions = Question.objects.count()
         # --- Avoid test when no questions are available --- #
+        questions = Question.objects.count()
         if questions == 0:
-            html = "<html><body><h1>No Questions in Database!!!</h1>Go back to <a href='/dashboard'>Dashboard </a>" \
+            html = "<html><body><h1>No Questions in Database!!!</h1>Go <a href='/start'>back </a>" \
                    "and add some entries! </body></html> "
             return HttpResponse(html)
 
-        # --- Check if it's the first POST --- #
+        # --- FIRST POST --- #
         if 'start-post' == request.POST['Post_name']:
             start_time = int(time.time())
             session = request.POST['session']
@@ -149,8 +172,14 @@ def home(request):
 
             # --- Calculate variables to send to template --- #
             if questions_dict:
-                this_key = next(iter(questions_dict.keys()))  # Get the first key in dictionary
-                this_section_values = questions_dict[this_key]  # Get the value of above key
+
+                # Check if user is on B team to remove Section A
+                if team == 'B':
+                    questions_dict.pop("A")
+                    print("Section A is removed from member of B Team.")
+
+                this_section = next(iter(questions_dict.keys()))  # Get the first key in dictionary
+                this_section_values = questions_dict[this_section]  # Get the value of above key
 
                 if this_section_values:
                     this_question_id = this_section_values[0]  # Get the first item in list
@@ -161,16 +190,20 @@ def home(request):
 
                     # --- Create Session variables with new values --- #
                     request.session['this_question_id'] = this_question_id
+                    request.session['this_section'] = this_section
 
                     context = {  # Variables for Template
                         'this_question': this_question,
-                        'section': this_key,
-                        'team': team
+                        'section': this_section,
+                        'team': team,
+                        'brake_time': brake_time
                     }
 
                     return render(request, 'pages/frontend/home.html', context)
 
+        # --- NEXT POST --- #
         if 'next' == request.POST['Post_name']:
+
             timestamp = int(time.time())  # Get timestamp in Epoch (seconds)
             selection = request.POST.get('selection')
 
@@ -178,27 +211,48 @@ def home(request):
             session_id = request.session.get('session_id')
             team = request.session.get('team')
             this_question_id = request.session.get('this_question_id')
+            this_section = request.session.get('this_section')
+
+            # --- FINISH POST --- #
+            # --- Check if there are any questions left. --- #
+            len_dict = len(questions_dict)
+            if len_dict <= 1:
+                last_section_key = next(iter(questions_dict.keys()))
+                if not questions_dict[last_section_key]:
+                    # # Saving data to the Database (Models.Data)
+                    fin = Data(session=session_id, status='finish', timestamp=timestamp, section=this_section,
+                               question=this_question_id, selection=selection, team=team)
+                    fin.save()
+                    print("End record saved to the database!")
+                    print("----------- END -----------")  # For debugging purposes
+
+                    # Calculate Total Time
+                    # --- Queries that get START and FINISH timestamps from Database --- #
+                    sta = int(Data.objects.get(session=session_id, status='start').timestamp)
+                    fin = int(Data.objects.get(session=session_id, status='finish').timestamp)
+
+                    time_diff = round(fin - sta)  # Total time converted in seconds and round.
+                    total_time = str(datetime.timedelta(seconds=time_diff))
+                    print('Total time: ', total_time, 'hrs:min:sec')  # For debugging purposes.
+
+                    context = {
+                        'total_time': total_time,
+                        'footer': Option.objects.get(id=1).footer
+                    }
+
+                    return render(request, 'pages/frontend/end.html', context)
 
             # # Saving data to the Database (Models.Data)
-            nex = Data(session=session_id, status='next', timestamp=timestamp, question=this_question_id,
-                       selection=selection, team=team)
+            nex = Data(session=session_id, status='next', timestamp=timestamp, section=this_section,
+                       question=this_question_id, selection=selection, team=team)
             nex.save()
             print("Next record saved to the database!")
             print("----------- NEXT -----------")  # For debugging purposes
 
             # --- Calculate variables to send to template --- #
-            print('questions_dict before: ', questions_dict)
             if questions_dict:
-                this_key = next(iter(questions_dict.keys()))  # Get the first key in dictionary
-                this_section_values = questions_dict[this_key]
-
-                check_for_brake = Section.objects.get(section=this_key).answer_category
-                if check_for_brake == 'brake':
-                    print('Eimai sto brake')
-                    context = {
-                        'team': team
-                    }
-                    return render(request, 'pages/frontend/brake.html', context)
+                this_section = next(iter(questions_dict.keys()))  # Get the first key in dictionary
+                this_section_values = questions_dict[this_section]
 
                 if this_section_values:
                     this_question_id = this_section_values[0]  # Get the first item in list
@@ -210,33 +264,26 @@ def home(request):
                     # --- Delete & Update Session variables with new values --- #
                     del request.session['questions_dict']
                     del request.session['this_question_id']
+                    del request.session['this_section']
                     request.session['questions_dict'] = questions_dict
                     request.session['this_question_id'] = this_question_id
-                    print('New questions_dict: ', request.session.get('questions_dict'))
-                    print('New this_question_id: ', request.session.get('this_question_id'))
+                    request.session['this_section'] = this_section
 
                     context = {
                         # Variables for Template
                         'this_question': this_question,
-                        'section': this_key,
-                        'team': team
+                        'section': this_section,
+                        'team': team,
+                        'brake_time': brake_time
                     }
 
                     return render(request, 'pages/frontend/home.html', context)
                 else:
-                    questions_dict.pop(this_key)
-                    print('Section ', this_key, ' is deleted!')
+                    questions_dict.pop(this_section)
+                    print('Section ', this_section, ' is deleted!')
 
-                    this_key = next(iter(questions_dict.keys()))  # Get the first key in dictionary
-                    this_section_values = questions_dict[this_key]
-
-                    check_for_brake = Section.objects.get(section=this_key).answer_category
-                    if check_for_brake == 'brake':
-                        print('Eimai sto brake2')
-                        context = {
-                            'team': team
-                        }
-                        return render(request, 'pages/frontend/brake.html', context)
+                    this_section = next(iter(questions_dict.keys()))  # Get the first key in dictionary
+                    this_section_values = questions_dict[this_section]
 
                     if this_section_values:
                         this_question_id = this_section_values[0]  # Get the first item in list
@@ -248,133 +295,27 @@ def home(request):
                         # --- Delete & Update Session variables with new values --- #
                         del request.session['questions_dict']
                         del request.session['this_question_id']
+                        del request.session['this_section']
                         request.session['questions_dict'] = questions_dict
                         request.session['this_question_id'] = this_question_id
-                        print('New questions_dict: ', request.session.get('questions_dict'))
-                        print('New this_question_id: ', request.session.get('this_question_id'))
+                        request.session['this_section'] = this_section
 
                         context = {
                             # Variables for Template
                             'this_question': this_question,
-                            'section': this_key,
-                            'team': team
+                            'section': this_section,
+                            'team': team,
+                            'brake_time': brake_time
                         }
 
                         return render(request, 'pages/frontend/home.html', context)
-            else:
-                html = "<html><body><h1>END!!!</h1> </body></html> "
-                return HttpResponse(html)
-
-        # elif 'next-image' == request.POST['Post_name']:
-        #
-        #     # # --- Timestamp for Next or Start --- #
-        #     next_time = request.POST['t']
-        #
-        #     # --- Check if all Images are done --- #
-        #     if len(pairs_remaining) == 0:
-        #
-        #         # --- Retrieve variables from Session --- #
-        #         flag = request.session.get('flag')
-        #         logo = request.session.get('logo')
-        #         footer = request.session.get('footer')
-        #
-        #         # --- Saving FINISHED entry to the Database --- #
-        #         fin = Data(session=session_id, timestamp=next_time, status='finish', score=None,
-        #                    countdown_per_pic=countdown_per_pic)
-        #         fin.save()
-        #         # For debugging purposes
-        #         print('----------- FINISHED -----------')
-        #
-        #         # --- Data for the END page --- #
-        #
-        #         # Calculate Total time
-        #         # --- Queries that get START and FINISH timestamps from Database --- #
-        #         sta = int(Data.objects.get(session=session_id, status='start').timestamp)
-        #         fin = int(Data.objects.get(session=session_id, status='finish').timestamp)
-        #
-        #         t_t = round((fin - sta) / 1000, 0)  # Total time converted in seconds and round (1 decimal)
-        #         total_time = str(datetime.timedelta(seconds=t_t))
-        #         print('Total time: ', total_time, 'hrs:min:sec')  # For debugging purposes.
-        #
-        #         # Calculate Average Search Time
-        #         sum_dt = 0
-        #         for i in pairs_done:
-        #             st = Data.objects.filter(session=session_id, pair_id=i, status='start')
-        #             nx = Data.objects.filter(session=session_id, pair_id=i, status='next')
-        #
-        #             if st.count() == 1 and nx.count() == 0:
-        #                 t0 = int(st[0].timestamp)
-        #             elif nx.count() == 1 and st.count() == 0:
-        #                 t0 = int(nx[0].timestamp)
-        #             else:
-        #                 t0 = None
-        #
-        #             tr = Data.objects.filter(session=session_id, pair_id=i, status='True')
-        #             fl = Data.objects.filter(session=session_id, pair_id=i, status='False')
-        #             ex = Data.objects.filter(session=session_id, pair_id=i, status='Expire')
-        #
-        #             if tr.count() == 1:
-        #                 t1 = int(tr[0].timestamp)
-        #                 dt = t1 - t0
-        #             elif fl.count() == 1:
-        #                 t1 = int(fl[0].timestamp)
-        #                 dt = t1 - t0
-        #             elif ex.count() == 1:
-        #                 t1 = int(ex[0].timestamp)
-        #                 dt = t1 - t0
-        #             else:
-        #                 dt = None
-        #
-        #             sum_dt = sum_dt + dt
-        #
-        #         aver_st = sum_dt / len(pairs_done)
-        #         aver_search_time = str(datetime.timedelta(seconds=round(aver_st / 1000, 0)))
-        #         print('Average search time: ', aver_search_time, 'hrs:min:sec')  # For debugging purposes.
-        #
-        #         # Calculate Percent completed
-        #         # --- Queries that get Accurate (yes) and Missed (no) Targets from Database --- #
-        #         yes = Data.objects.filter(session=session_id, status=True).count()
-        #
-        #         percent_complete = round(yes / count_starting_pairs * 100)
-        #         print('Percentage completed: ', percent_complete, '%')  # For debugging purposes.
-        #
-        #         context = {
-        #             'flag': flag,
-        #             'logo': logo,
-        #             'footer': footer,
-        #             'total_time': total_time,
-        #             'aver_search_time': aver_search_time,
-        #             'percent_complete': percent_complete,
-        #         }
-        #
-        #         return render(request, 'pages/frontend/end.html', context)
-
-
-# def end(request):
-#
-#     return render(request, 'pages/frontend/end.html')
-
-
-@login_required
-def brake(request):
-    user = get_user(request)
-
-    if user.username == 'user':
-        return redirect('/')
-
-    context = {
-        # 'countdown': countdown,
-    }
-
-    return render(request, 'frontend/home.html', context)
-
 
 # -------------------------------------------------------------------------------------------------------------------- #
 #   BACK-END
 # -------------------------------------------------------------------------------------------------------------------- #
 
 @login_required
-def dashboard(request):
+def question(request):
     questions = Question.objects.all()
     total_questions = questions.count()
     total_tests = Data.objects.all().aggregate(Max('session'))['session__max']
@@ -388,7 +329,7 @@ def dashboard(request):
         'total_questions': total_questions,
         'total_tests': total_tests
     }
-    return render(request, 'pages/backend/dashboard.html', context)
+    return render(request, 'pages/backend/question.html', context)
 
 
 @login_required
@@ -510,7 +451,7 @@ def create(request):
             print('All forms are valid')
             model1 = form.save()
             messages.success(request, 'New Question successfully created!')
-            return redirect('/dashboard')
+            return redirect('/question')
         else:
             print('Something wrong with forms')
             form = QuestionForm()
@@ -564,7 +505,7 @@ def delete(request, pk):
     if request.method == "POST":
         this_question.delete()
         messages.success(request, 'The question successfully deleted!')
-        return redirect('/dashboard')
+        return redirect('/question')
     context = {
         'item': this_question
     }
@@ -584,121 +525,9 @@ def options(request):
         if form.is_valid():
             form.save()
             messages.success(request, 'Your options successfully applied!!')
-            return redirect('/dashboard')
+            return redirect('/start')
     context = {
         'this_option': this_option,
         'form': form
     }
     return render(request, 'pages/backend/options.html', context)
-
-# @login_required
-# def rankings(request):
-#     user = get_user(request)
-#     if user.username == 'user':
-#         return redirect('/')
-#
-#     # --- Retrieve Session from Database --- #
-#     last_session_in_data = Data.objects.aggregate(Max('session'))['session__max']
-#     last_session_in_rank = Rank.objects.aggregate(Max('session'))['session__max']
-#
-#     if last_session_in_data is None:
-#         print('No results to show.')
-#         return render(request, 'pages/backend/rankings.html')
-#
-#     if last_session_in_rank is None:
-#         print('No results to show.')
-#         last_session_in_rank = 0
-#
-#     if last_session_in_rank < last_session_in_data:
-#
-#         # --- RANKING CALCULATIONS --- #
-#         # --- Calculate average accuracy score for each pair --- #
-#         pair_list = Data.objects.values_list('pair', flat=True).exclude(pair=None).distinct()
-#
-#         success = {}
-#         failure = {}
-#         accuracy = {}
-#
-#         for i in pair_list:
-#
-#             success[i] = Data.objects.filter(status='True', pair=i).count()
-#             failure[i] = Data.objects.filter(Q(pair=i) & (Q(status='False') | Q(status='Expire'))).count()
-#
-#             avg_pair = Data.objects.filter(Q(pair=i) & (Q(status='True') | Q(status='False') | Q(status='Expire'))
-#                                            ).aggregate(Avg('score'))['score__avg']
-#             if avg_pair is None:
-#                 avg_pair = 0
-#
-#             accuracy[i] = round(avg_pair, 2)
-#
-#             # --- Saving Success, Failures & Accuracy entry to the Database --- #
-#             find_pair = Rank.objects.filter(pair=i)
-#             if find_pair.exists():
-#                 ac = Rank.objects.get(pair=i)
-#                 ac.session = last_session_in_data
-#                 ac.success = success[i]
-#                 ac.failure = failure[i]
-#                 ac.accuracy = accuracy[i]
-#                 ac.save()
-#                 print('Accuracy -------------- updated')
-#             else:
-#                 ac = Rank(pair=i, session=last_session_in_data, success=success[i], failure=failure[i],
-#                           accuracy=accuracy[i])
-#                 ac.save()
-#                 print('Accuracy -------------- created')
-#
-#         # --- Calculate average time score for each pair --- #
-#         session_list = Data.objects.values_list('session', flat=True).distinct()
-#
-#         time_dict = {}
-#         for i in pair_list:
-#             time_dict[i] = []  # Each dict value is an array of each pair time differences (milliseconds)
-#
-#         for i in session_list:
-#             for j in pair_list:
-#                 a1 = Data.objects.filter(Q(session=i) & Q(pair=j) & (Q(status='start') | Q(status='next')))
-#                 if a1:
-#                     a = a1[0].timestamp
-#                 else:
-#                     a = 0
-#
-#                 b1 = Data.objects.filter(
-#                     Q(session=i) & Q(pair=j) & (Q(status='True') | Q(status='False') | Q(status='Expire')))
-#                 if b1:
-#                     b = b1[0].timestamp
-#                     diff = int(b) - int(a)
-#                     time_dict[j].append(diff)
-#
-#         response = {}
-#         for i in pair_list:
-#             #  Calculate the average time difference, convert in seconds.
-#             x = sum(time_dict[i]) / len(time_dict[i]) / 1000
-#             response[i] = round(x, 2)
-#
-#             # --- Saving Response entry to the Database --- #
-#             find_pair = Rank.objects.filter(pair=i)
-#             if find_pair.exists():
-#                 re = Rank.objects.get(pair=i)
-#                 re.response = response[i]
-#                 re.save()
-#                 print('Response -------------- updated')
-#             else:
-#                 re = Rank(response=response[i])
-#                 re.save()
-#                 print('Response -------------- created')
-#
-#         print('SUCCESS', success)
-#         print('FAILURE', failure)
-#         print('ACCURACY', accuracy)
-#         print('RESPONSE', response)
-#
-#         rank = Rank.objects.all()
-#         print('RANK', rank)
-#         context = {'rank': rank}
-#
-#         return render(request, 'pages/backend/rankings.html', context)
-#
-#     rank = Rank.objects.all()
-#     context = {'rank': rank}
-#
-#     return render(request, 'pages/backend/rankings.html', context)

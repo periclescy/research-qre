@@ -74,6 +74,7 @@ class AnswerCategory(models.TextChoices):
 
 # ------------- OPTION ------------- #
 class Option(models.Model):
+    brake_time = models.PositiveSmallIntegerField(default=15, blank=False, null=False)
     headline = models.CharField(max_length=25, default='Instructions')
     instructions = RichTextField(default='Put your instructions here')
     footer = models.CharField(max_length=120, default='© 2022 Regnabytes Ltd')
@@ -110,6 +111,7 @@ class Data(models.Model):
     session = models.IntegerField()
     timestamp = models.CharField(max_length=50)
     status = models.CharField(max_length=10, null=True)
+    section = models.CharField(max_length=1, null=True)
     question = RichTextField(max_length=1500, null=True)
     selection = models.IntegerField(null=True)
     team = models.CharField(max_length=30, null=True)

@@ -5,7 +5,7 @@ from .models import *
 
 # ------------- OPTION ------------- #
 class PostOption(admin.ModelAdmin):
-    list_display = ('id', 'headline', 'instructions', 'footer')
+    list_display = ('id', 'brake_time', 'headline', 'instructions', 'footer')
 
 
 class MyOption(Option):
@@ -81,7 +81,7 @@ admin.site.register(MyQuestion, MyQuestionIEAdmin)
 
 # ------------- DATA ------------- #
 class PostData(admin.ModelAdmin):
-    list_display = ('id', 'session', 'timestamp',  'status', 'question', 'selection', 'team')
+    list_display = ('id', 'session', 'timestamp',  'status', 'section', 'question', 'selection', 'team')
 
 
 class MyData(Data):
