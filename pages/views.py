@@ -1,11 +1,9 @@
 import datetime
 import time
-import json
-
 from django.contrib import messages
 from django.db.models import *
 from django.shortcuts import render, redirect
-from django.http import HttpResponse, JsonResponse
+from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout, get_user
 from .forms import *
@@ -176,7 +174,7 @@ def home(request):
                 # Check if user is on B team to remove Section A
                 if team == 'B':
                     questions_dict.pop("A")
-                    print("Section A is removed from member of B Team.")
+                    print("Section A is removed from user member of Team B.")
 
                 this_section = next(iter(questions_dict.keys()))  # Get the first key in dictionary
                 this_section_values = questions_dict[this_section]  # Get the value of above key
@@ -309,6 +307,7 @@ def home(request):
                         }
 
                         return render(request, 'pages/frontend/home.html', context)
+
 
 # -------------------------------------------------------------------------------------------------------------------- #
 #   BACK-END
