@@ -1,60 +1,122 @@
 {% extends "pages/frontend/main.html" %}
+{% load myfilters %}
 {% load static %}
 
 {% block content %}
 
-<div class="description-progress alert alert-dismissible fade show">
-    <div class="progress">
-        <div class="progress-bar progress-bar-striped progress-bar-animated" style="width:100%">100%</div>
-    </div>
-    <button type="button" class="close" data-dismiss="alert">&times;</button>
-    <p class="pt-2 description">{{ this_pair.description_el }}</p>
-</div>
-
-<a class="btn btn-secondary" id="next_button" href="{% url 'backend-pair' this_pair.id %}">Go Back</a>
-
-
-<div class="container-fluid vh-100 d-flex align-items-center">
-    <div class="container-fluid">
-        <div class="row align-items-center">
-
-            <section class="col-8 pl-3 pr-2 column-box text-center">
-                <div class="image-box-pri">
-                    <img class="image-fit" id="img_pri" src="{{ this_pair.image_pri.url }}" alt="{{ this_pair.image_pri }}"/>
-                    <div class="target_expired" id="pri-target" style="top: {{y_primary}}%; left: {{x_primary}}%; width: {{width_primary}}%; height: {{height_primary}}%;"></div>
+<div class="container">
+    <div class="position-absolute top-0 end-0 p-3"><a href="{% url 'backend-details' this_question.id %}"><button class="btn btn-secondary btn-lg">Go Back</button></a></div>
+    <h1 class="p-3">Μέρος {{ section }} - Ομάδα N/A</h1>
+    <div class="card text-center">
+        <div class="card-header">
+            {% if this_question.section.answer_category == "brake" %}<div id="countdown" class="display-2"></div>{% endif %}
+        </div>
+        <div class="card-body">
+            {% if this_question.section.answer_category == "brake" %}
+                 <img src="/media/coffee-brake.jpg" class="img-fluid" alt="brake image">
+             {% else %}
+                <h5 class="card-title"></h5>
+                <p class="card-text">{{ this_question.question|safe }}</p>
+            {% endif %}
+        </div>
+        <div class="card-footer">
+            {% if this_question.section.answer_category == "brake" %}
+                <form method="POST" action="{% url 'frontend-home' %}" id="next-form" name="next-form">
+                    {% csrf_token %}
+                    <input type="hidden" name="selection" id="selection" value="0" />
+                    <input type="hidden" name="Post_name" value="next" />
+                    <input type="submit" class="d-none btn" value="submit" />
+                </form>
+            {% endif %}
+            <div class="row p-3">
+            {% if this_question.section.answer_category == "boolean" %}
+            {% for i in 3|times %}
+                <div class="col text-center">
+                    <form method="POST" id="next-form">
+                        {% csrf_token %}
+                        <input type="hidden" name="selection" id="{{ i }}" value="{{ i }}" />
+                        <input type="hidden" name="Post_name" value="next" />
+                        <button class="btn btn-primary btn-lg w-100" type="submit">{{ i }}</button>
+                    </form>
                 </div>
-                <div class="p-0 m-0 spacer">&nbsp;</div>
-                <div class="text-center caption-pri">
-                    <h4 class="caption-text rounded">{{ this_pair.caption_pri_el|safe }}</h4>
+            {% endfor %}
+            {% elif this_question.section.answer_category == "likert6" %}
+            {% for i in 7|times %}
+                <div class="col text-center">
+                    <form method="POST" id="next-form">
+                        {% csrf_token %}
+                        <input type="hidden" name="selection" id="{{ i }}" value="{{ i }}" />
+                        <input type="hidden" name="Post_name" value="next" />
+                        <button class="btn btn-primary btn-lg w-100" type="submit"> {{ i }} </button>
+                    </form>
                 </div>
-            </section>
-
-            <section class="col-4 pr-3 pl-2 column-box text-center">
-                <div class="image-box-sec">
-                    <img class="image-fit {{ target_exist }}" id="img_sec" src="{{ this_pair.image_sec.url }}" alt="{{ this_pair.image_sec}}"/>
-                    <div class="target_expired {{ target_sec }}" id="sec-target" style="top: {{y_secondary}}%; left: {{x_secondary}}%; width: {{width_secondary}}%; height: {{height_secondary}}%;"></div>
+            {% endfor %}
+            {% elif this_question.section.answer_category == "likert7" %}
+            {% for i in 8|times %}
+                <div class="col text-center">
+                    <form method="POST" id="next-form">
+                        {% csrf_token %}
+                        <input type="hidden" name="selection" id="{{ i }}" value="{{ i }}" />
+                        <input type="hidden" name="Post_name" value="next" />
+                        <button class="btn btn-primary btn-lg w-100" type="submit"> {{ i }} </button>
+                    </form>
                 </div>
-                <div class="p-0 m-0 spacer">&nbsp;</div>
-                <div class="text-center caption-sec">
-                    <h5 class="caption-text rounded">{{ this_pair.caption_sec_el|safe }}</h5>
-                </div>
-            </section>
+            {% endfor %}
+            {% endif %}
+            </div>
         </div>
     </div>
 </div>
 
-<script>
+    {% if this_question.section.answer_category == "brake" %}
+        <script>
+            let brake_time = {{ brake_time }}
 
-    {#let filename_pri = "{{ filename_pri }}";#}
-    {#let filename_sec = "{{ filename_sec }}";#}
-    {#let countdown_per_pic = {{ countdown_per_pic }};#}
-    {#let spot_pri = {{ spot_pri|safe }};#}
-    {#let spot_sec = {{ spot_sec|safe }};#}
+            window.onload = function() {
+                // Get today's date and time
+                let now = new Date().getTime();
 
-</script>
+                // Set the date we're counting down to
+                let countDownMinutes = now + (brake_time * 60 * 1000)
 
+                // Update the count-down
+                let x = setInterval(function() {
+                    // Get today's date and time
+                    let now = new Date().getTime();
+                    // Find the distance between now and the countdown date
+                    let distance = countDownMinutes - now;
+
+                    // Time calculations for days, hours, minutes and seconds
+                    let hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                    let minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                    let seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+                    // Display the result in the element
+
+                    let element = document.getElementById("countdown");
+                    element.innerHTML = hours + "h " + minutes + "m " + seconds + "s ";
+
+                    let warning_sec = 180 * 1000;
+                    let danger_sec = 60 * 1000;
+
+                    if (distance < warning_sec && distance >= danger_sec) {
+                        element.classList.add("bg-warning");
+                    }
+                    if (distance < danger_sec && distance > 0) {
+                        element.classList.remove("bg-warning");
+                        element.classList.add("bg-danger");
+
+                    }
+                    if (distance <= 0) {
+                        clearInterval(x);
+                        element.innerHTML = "";
+                    }
+                }, 250);
+            }
+        </script>
+    {% endif %}
 
 <!-- Load main.js -->
-{#<script src="{% static 'pages/js/main.js' %}" ></script>#}
+<script src="{% static 'pages/js/main.js' %}"></script>
 
 {% endblock %}

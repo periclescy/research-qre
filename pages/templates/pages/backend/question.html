@@ -28,7 +28,7 @@
                 <h3 class="card-title">{{ total_tests }}</h3>
             </div>
             <div class="card-footer">
-                <a class="btn btn-warning btn-sm btn-block" href="">Rankings</a>
+                <a class="btn btn-dark btn-sm btn-block" href="">N/A</a>
             </div>
         </div>
     </div>
@@ -50,7 +50,7 @@
                     <td class="text-left">{{i.question|safe}}</td>
                     <td>
                         <a class="btn btn-sm btn-primary my-1 w-100" href="{% url 'backend-details' i.id %}">Details</a><br/>
-                        <a class="btn btn-sm btn-info my-1 w-100" href="{% url 'backend-update' i.id %}">Update</a><br/>
+                        <a class="btn btn-sm btn-warning my-1 w-100" href="{% url 'backend-update' i.id %}">Update</a><br/>
                         <a class="btn btn-sm btn-danger my-1 w-100" href="{% url 'backend-delete' i.id %}">Delete</a>
                     </td>
                 </tr>

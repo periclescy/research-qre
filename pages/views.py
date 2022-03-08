@@ -424,6 +424,8 @@ def details(request, pk):
 def preview(request, pk):
     questions = Question.objects.all()
     this_question = questions.get(id=pk)
+    section = this_question.section
+    brake_time = Option.objects.get(id=1).brake_time
 
     user = get_user(request)
     if user.username == 'user':
@@ -431,6 +433,8 @@ def preview(request, pk):
 
     context = {
         'this_question': this_question,
+        'section': section,
+        'brake_time': brake_time
     }
     return render(request, 'pages/backend/preview.html', context)
 

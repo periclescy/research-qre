@@ -12,7 +12,7 @@
         </div>
         <div class="card-body">
             {% if this_question.section.answer_category == "brake" %}
-                 <img src="media/coffee-brake.jpg" class="img-fluid" alt="brake image">
+                 <img src="/media/coffee-brake.jpg" class="img-fluid" alt="brake image">
              {% else %}
                 <h5 class="card-title"></h5>
                 <p class="card-text">{{ this_question.question|safe }}</p>
@@ -95,8 +95,8 @@
                     let element = document.getElementById("countdown");
                     element.innerHTML = hours + "h " + minutes + "m " + seconds + "s ";
 
-                    let warning_sec = 120 * 1000;
-                    let danger_sec = 30 * 1000;
+                    let warning_sec = 180 * 1000;
+                    let danger_sec = 60 * 1000;
 
                     if (distance < warning_sec && distance >= danger_sec) {
                         element.classList.add("bg-warning");
