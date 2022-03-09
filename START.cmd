@@ -1,4 +1,4 @@
 @echo off
-cmd /k "cd /d .\venv\Scripts & activate & cd /d    ..\..\ & python manage.py runserver"
+cmd /k "cd /d .\env\Scripts & activate & cd /d    ..\..\ & python manage.py runserver"
 
 
