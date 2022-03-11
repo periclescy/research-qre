@@ -118,16 +118,3 @@ class Data(models.Model):
 
     class Meta:
         verbose_name_plural = "Data"
-
-# ------------- RANK ------------- #
-# class Rank(models.Model):
-#     session = models.IntegerField()
-#     pair = models.PositiveSmallIntegerField()
-#     success = models.PositiveSmallIntegerField()
-#     failure = models.PositiveSmallIntegerField()
-#     # total_score = models.FloatField(null=True)
-#     accuracy = models.FloatField(null=True)
-#     response = models.FloatField(null=True)
-#
-#     class Meta:
-#         verbose_name_plural = "Rank"

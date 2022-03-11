@@ -96,21 +96,3 @@ class MyDataIEAdmin(ImportExportModelAdmin):
 
 admin.site.register(Data, PostData)
 admin.site.register(MyData, MyDataIEAdmin)
-
-# ------------- RANK ------------- #
-# class PostRank(admin.ModelAdmin):
-#     list_display = ('id', 'session', 'pair', 'success', 'failure', 'accuracy', 'response')
-#
-#
-# class MyRank(Data):
-#     class Meta:
-#         proxy = True
-#         verbose_name_plural = "~ Import/Export Rank"
-#
-#
-# class MyRankIEAdmin(ImportExportModelAdmin):
-#     pass
-#
-#
-# admin.site.register(Rank, PostRank)
-# admin.site.register(MyRank, MyRankIEAdmin)

@@ -32,7 +32,7 @@
                 <form action="/home" method="POST" id="user-form">
                     {% csrf_token %}
                     <div class="card-header text-left">
-                        <div class="row py-2">
+                        <div class="row py-1">
                             <div class="col text-large">{{ form.team |as_crispy_field  }}</div>
                         </div>
                     </div>
@@ -41,29 +41,29 @@
                         <input type="hidden" id="id_session" name="session" value={{ session_id }}>
                         <input type="hidden" id="id_start_t" name="t" value="">
 
-                        <div class="row py-2">
+                        <div class="row py-1">
                             <div class="col">{{ form.gender |as_crispy_field  }}</div>
                         </div>
 
-                        <div class="row py-2">
+                        <div class="row py-1">
                             <div class="col">{{ form.age |as_crispy_field  }}</div>
                         </div>
 
-                        <div class="row py-2">
+                        <div class="row py-1">
                             <div class="col">{{ form.education |as_crispy_field }}</div>
                         </div>
 
-                        <div class="row py-2">
+                        <div class="row py-1">
                             <div class="col">{{ form.district |as_crispy_field }}</div>
                         </div>
 
-                        <div class="row py-2">
+                        <div class="row py-1">
                             <div class="col">{{ form.residence |as_crispy_field }}</div>
                         </div>
 
                         <input type='hidden' name="Post_name" value="start-post" />
                         <div class="row mx-auto my-4">
-                            <input class="btn btn-danger btn-lg w-25" id="submit" type="submit" value="Start" />
+                            <input class="btn btn-danger btn-md w-25" id="submit" type="submit" value="Start" />
                         </div>
                     </div>
                 </form>
